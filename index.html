@@ -3,24 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenEpi Interactive Suite</title>
+    <title>OpenEpi Toolkit - Reimagined</title>
+    
+    <!-- Professional Modern Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Design Variables: Grayscale and Glassmorphism */
+        /* Base Variables - Glossy Grayscale Palette */
         :root {
-            --bg-canvas: #f3f4f6;
-            --bg-sidebar: #ffffff;
-            --text-primary: #1f2937;
-            --text-muted: #6b7280;
-            --border-subtle: rgba(0, 0, 0, 0.06);
-            --glossy-surface: rgba(255, 255, 255, 0.8);
-            --glossy-border: rgba(255, 255, 255, 0.5);
-            --gray-dark: #374151;
-            --gray-light: #f9fafb;
-            --accent-gray: #4b5563;
+            --bg-gradient: linear-gradient(135deg, #e0e5ec 0%, #f1f3f6 100%);
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            
+            --text-dark: #2d3436;
+            --text-muted: #636e72;
+            --accent-gray: #636e72;
+            --accent-dark: #2d3436;
+            --table-header: rgba(99, 110, 114, 0.1);
         }
 
         * {
@@ -31,1183 +33,562 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-canvas);
-            color: var(--text-primary);
+            background: var(--bg-gradient);
+            color: var(--text-dark);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* Top Institutional Header Layout */
+        /* Glassmorphic Header */
         header {
-            background: linear-gradient(90deg, #ffffff, #f9fafb);
-            border-bottom: 1px solid var(--border-subtle);
-            padding: 18px 35px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 15px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            z-index: 10;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--glass-shadow);
         }
 
         header h1 {
-            font-size: 1.35rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: var(--gray-dark);
+            color: var(--accent-dark);
             letter-spacing: -0.5px;
         }
 
-        .header-meta {
-            font-size: 0.82rem;
+        .header-credit {
+            font-size: 0.85rem;
             color: var(--text-muted);
             text-align: right;
             line-height: 1.4;
         }
 
-        .header-meta a {
-            color: var(--accent-gray);
+        .header-credit a {
+            color: var(--accent-dark);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
         }
 
-        /* Application Layout Area */
-        .workspace {
+        /* Layout */
+        .app-container {
             display: flex;
             flex: 1;
-            height: calc(100vh - 120px);
+            padding: 20px 5%;
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
         }
 
-        /* Multi-level Navigation Sidebar */
+        /* Mobile Menu Toggle */
+        .mobile-menu-btn {
+            display: none;
+            width: 100%;
+            padding: 12px;
+            background: var(--accent-dark);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        /* Glassmorphic Sidebar */
         aside {
-            width: 300px;
-            background-color: var(--bg-sidebar);
-            border-right: 1px solid var(--border-subtle);
-            padding: 20px 15px;
-            overflow-y: auto;
+            width: 280px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--glass-shadow);
+            height: fit-content;
+            flex-shrink: 0;
         }
 
-        .category-group {
-            margin-bottom: 18px;
-        }
-
-        .category-label {
-            font-size: 0.72rem;
+        .menu-title {
+            font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--text-muted);
-            margin-bottom: 8px;
-            padding-left: 10px;
+            margin-bottom: 10px;
             font-weight: 700;
+            padding-left: 10px;
+            margin-top: 15px;
         }
 
-        .nav-link {
+        .menu-item {
             display: block;
             width: 100%;
-            padding: 9px 12px;
-            margin-bottom: 3px;
-            color: #4b5563;
+            padding: 10px 15px;
+            margin-bottom: 5px;
+            color: var(--text-dark);
             text-decoration: none;
-            font-size: 0.88rem;
+            font-size: 0.95rem;
             font-weight: 500;
-            border-radius: 6px;
+            border-radius: 8px;
             background: transparent;
             border: none;
             text-align: left;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
         }
 
-        .nav-link:hover {
-            background-color: #f3f4f6;
-            color: var(--text-primary);
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateX(5px);
         }
 
-        .nav-link.active-link {
-            background-color: var(--accent-gray);
+        .menu-item.active {
+            background: var(--accent-dark);
             color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        .nested-menu-btn {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nested-menu-btn::after {
-            content: '▾';
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .nested-container {
-            display: none;
-            padding-left: 12px;
-            margin-top: 2px;
-        }
-
-        .nested-container.expanded {
-            display: block;
-        }
-
-        .nested-container .nav-link {
-            font-size: 0.82rem;
-            padding: 7px 12px;
-        }
-
-        /* Glassmorphic Viewport Wrapper */
+        /* Glossy Main Content Area */
         main {
             flex: 1;
-            padding: 35px;
-            overflow-y: auto;
-            background: linear-gradient(135deg, #e5e7eb, #d1d5db);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
-
-        .glossy-viewport {
-            background: var(--glossy-surface);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glossy-border);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
             border-radius: 16px;
-            width: 100%;
-            max-width: 1000px;
             padding: 35px;
-            min-height: 550px;
+            box-shadow: var(--glass-shadow);
+            min-height: 600px;
         }
 
-        .module-view {
+        .content-section {
             display: none;
+            animation: fadeIn 0.4s ease;
         }
 
-        .module-view.active-view {
+        .content-section.active-section {
             display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 12px;
-            border-bottom: 2px solid rgba(0,0,0,0.04);
-            padding-bottom: 8px;
-        }
-
-        p {
-            font-size: 0.92rem;
-            line-height: 1.55;
-            color: #4b5563;
-            margin-bottom: 20px;
-        }
-
-        /* Mathematical Notation Box */
-        .formula-box {
-            background-color: rgba(0, 0, 0, 0.03);
-            border-left: 4px solid var(--accent-gray);
-            padding: 14px 18px;
-            border-radius: 6px;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-            font-size: 0.85rem;
-            margin-bottom: 25px;
-            color: #1f2937;
-            line-height: 1.6;
-        }
-
-        .formula-box span {
-            display: block;
+            font-size: 1.7rem;
             font-weight: 700;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.78rem;
-            text-transform: uppercase;
-            color: #6b7280;
-            margin-bottom: 6px;
+            margin-bottom: 10px;
+            color: var(--accent-dark);
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+            padding-bottom: 15px;
         }
 
-        /* Panel Grid Configurations */
-        .grid-split {
+        p.subtitle {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+
+        /* Input Panel & OpenEpi Styles */
+        .oe-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
         }
 
-        @media (max-width: 850px) {
-            .grid-split { grid-template-columns: 1fr; }
-            .workspace { flex-direction: column; height: auto; }
-            aside { width: 100%; height: auto; }
+        .input-panel, .output-panel {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.5);
         }
 
-        .card-interface {
-            background: rgba(255,255,255,0.6);
-            border: 1px solid rgba(0,0,0,0.04);
-            border-radius: 10px;
-            padding: 22px;
-        }
-
-        h3 {
-            font-size: 1.05rem;
-            margin-bottom: 15px;
-            color: var(--gray-dark);
+        .input-panel h3, .output-panel h3 {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: var(--accent-dark);
             font-weight: 600;
         }
 
-        .input-row {
-            margin-bottom: 14px;
+        .form-group {
+            margin-bottom: 18px;
         }
 
-        label {
+        .form-group label {
             display: block;
-            font-size: 0.82rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #374151;
-        }
-
-        input[type="number"], select {
-            width: 100%;
-            padding: 9px 12px;
-            border: 1px solid rgba(0,0,0,0.12);
-            border-radius: 6px;
-            font-family: inherit;
             font-size: 0.9rem;
-            background-color: #ffffff;
-            transition: border 0.15s;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--accent-dark);
         }
 
-        input[type="number"]:focus, select:focus {
+        .form-group .hint {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.2s;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        input[type="number"]:focus {
             outline: none;
-            border-color: var(--accent-gray);
+            border-color: var(--accent-dark);
+            box-shadow: 0 0 0 3px rgba(45, 52, 54, 0.1);
         }
 
-        /* Tabular Metrics Displays */
+        .btn-calc {
+            background: var(--accent-dark);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-calc:hover {
+            background: #1e272e;
+            transform: translateY(-1px);
+        }
+
+        .btn-calc:active {
+            transform: translateY(1px);
+        }
+
+        /* Table Styles */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 5px;
-            font-size: 0.88rem;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-top: 15px;
         }
 
         th, td {
-            padding: 10px 12px;
+            padding: 14px 15px;
             text-align: center;
-            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-size: 0.95rem;
         }
 
         th {
-            background-color: rgba(0, 0, 0, 0.02);
+            background-color: var(--table-header);
             font-weight: 600;
-            color: #374151;
+            color: var(--accent-dark);
         }
 
-        .table-input-matrix input {
-            width: 80px;
-            text-align: center;
-            padding: 5px;
+        tr:last-child td {
+            border-bottom: none;
         }
 
-        .action-button {
-            background-color: var(--accent-gray);
-            color: #ffffff;
-            border: none;
-            padding: 10px 18px;
-            font-size: 0.88rem;
-            font-weight: 500;
-            border-radius: 6px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 8px;
-            transition: background 0.15s;
-        }
-
-        .action-button:hover {
-            background-color: #1f2937;
-        }
-
+        /* Footer */
         footer {
-            background-color: #ffffff;
-            border-top: 1px solid var(--border-subtle);
-            padding: 18px 35px;
             text-align: center;
-            font-size: 0.82rem;
+            padding: 20px;
             color: var(--text-muted);
+            font-size: 0.85rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid var(--glass-border);
+            margin-top: auto;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 900px) {
+            .app-container {
+                flex-direction: column;
+                padding: 15px;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            aside {
+                width: 100%;
+                display: none; /* Hidden by default on mobile */
+            }
+
+            aside.show-mobile {
+                display: block;
+            }
+
+            .oe-grid {
+                grid-template-columns: 1fr;
+            }
+
+            main {
+                padding: 20px;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .header-credit {
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- Header -->
     <header>
-        <h1>OpenEpi Strategic Engine</h1>
-        <div class="header-meta">
-            Illustrated &amp; Documented by: <strong>Dr Suriya kumareswaran</strong><br>
-            Registry: <a href="mailto:dr.suriya@moh.gov.my">dr.suriya@moh.gov.my</a>
+        <h1>OpenEpi Toolkit</h1>
+        <div class="header-credit">
+            Illustrated by: <strong>Dr Suriya kumareswaran</strong><br>
+            Email: <a href="mailto:dr.suriya@moh.gov.my">dr.suriya@moh.gov.my</a>
         </div>
     </header>
 
-    <div class="workspace">
-        <aside>
-            <div class="category-group">
-                <button class="nav-link active-link" onclick="route('view-home', this)">System Initialization</button>
-                <button class="nav-link" onclick="route('view-info', this)">Documentation &amp; Support</button>
-            </div>
+    <div class="app-container">
+        
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰ Toggle Menu</button>
 
-            <div class="category-group">
-                <div class="category-label">Counts Evaluation</div>
-                <button class="nav-link nested-menu-btn" onclick="toggleFolder('folder-counts')">Select Method</button>
-                <div id="folder-counts" class="nested-container">
-                    <button class="nav-link" onclick="route('view-smr', this)">Std. Mort. Ratio</button>
-                    <button class="nav-link" onclick="route('view-proportion', this)">Proportion CI</button>
-                    <button class="nav-link" onclick="route('view-twobytwo', this)">Two by Two Table</button>
-                    <button class="nav-link" onclick="route('view-doseresponse', this)">Dose-Response</button>
-                    <button class="nav-link" onclick="route('view-rbyc', this)">R by C Table</button>
-                    <button class="nav-link" onclick="route('view-matchedcc', this)">Matched Case Control</button>
-                    <button class="nav-link" onclick="route('view-screening', this)">Screening Metrics</button>
-                </div>
-            </div>
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar-menu">
+            <div class="menu-title">General</div>
+            <button class="menu-item active" onclick="navigate('home', this)">Home / About</button>
+            
+            <div class="menu-title">Sample Size</div>
+            <button class="menu-item" onclick="navigate('calc-proportion', this)">Proportion</button>
+            <button class="menu-item" onclick="navigate('coming-soon', this)">Unmatched CC</button>
+            <button class="menu-item" onclick="navigate('coming-soon', this)">Cohort/RCT</button>
 
-            <div class="category-group">
-                <div class="category-label">Person Time Analysis</div>
-                <button class="nav-link nested-menu-btn" onclick="toggleFolder('folder-person')">Select Method</button>
-                <div id="folder-person" class="nested-container">
-                    <button class="nav-link" onclick="route('view-onerate', this)">1 Rate Assessment</button>
-                    <button class="nav-link" onclick="route('view-tworates', this)">Compare 2 Rates</button>
-                </div>
-            </div>
-
-            <div class="category-group">
-                <div class="category-label">Continuous Variables</div>
-                <button class="nav-link nested-menu-btn" onclick="toggleFolder('folder-continuous')">Select Method</button>
-                <div id="folder-continuous" class="nested-container">
-                    <button class="nav-link" onclick="route('view-meanci', this)">Mean CI Calculation</button>
-                    <button class="nav-link" onclick="route('view-medianci', this)">Median / %ile CI</button>
-                    <button class="nav-link" onclick="route('view-ttest', this)">Independent t-test</button>
-                    <button class="nav-link" onclick="route('view-anova', this)">One-Way ANOVA</button>
-                </div>
-            </div>
-
-            <div class="category-group">
-                <div class="category-label">Sample Size Estimation</div>
-                <button class="nav-link nested-menu-btn" onclick="toggleFolder('folder-samplesize')">Select Target</button>
-                <div id="folder-samplesize" class="nested-container">
-                    <button class="nav-link" onclick="route('view-ss-prop', this)">Proportion Survey</button>
-                    <button class="nav-link" onclick="route('view-ss-unmatchedcc', this)">Unmatched Case Control</button>
-                    <button class="nav-link" onclick="route('view-ss-cohort', this)">Cohort / RCT Framework</button>
-                    <button class="nav-link" onclick="route('view-ss-meandiff', this)">Mean Difference Model</button>
-                </div>
-            </div>
-
-            <div class="category-group">
-                <div class="category-label">Power Analysis</div>
-                <button class="nav-link nested-menu-btn" onclick="toggleFolder('folder-power')">Select Context</button>
-                <div id="folder-power" class="nested-container">
-                    <button class="nav-link" onclick="route('view-p-unmatchedcc', this)">Unmatched Case Control</button>
-                    <button class="nav-link" onclick="route('view-p-cohort', this)">Cohort Design</button>
-                    <button class="nav-link" onclick="route('view-p-clinical', this)">Clinical Trial Setup</button>
-                    <button class="nav-link" onclick="route('view-p-xsectional', this)">Cross-Sectional Model</button>
-                    <button class="nav-link" onclick="route('view-p-meandiff', this)">Mean Difference Power</button>
-                </div>
-            </div>
+            <div class="menu-title">Counts</div>
+            <button class="menu-item" onclick="navigate('coming-soon', this)">Two by Two Table</button>
         </aside>
 
+        <!-- Main Workspace -->
         <main>
-            <div class="glossy-viewport">
+            
+            <!-- Home Section -->
+            <section id="home" class="content-section active-section">
+                <h2>Open Source Statistics for Public Health</h2>
+                <p class="subtitle">A modern, handphone-friendly, glassmorphic redesign of the classic OpenEpi statistical suite.</p>
                 
-                <section id="view-home" class="module-view active-view">
-                    <h2>Interactive OpenEpi Matrix</h2>
-                    <p>Welcome to the structured calculation workspace. This framework computes automated metrics across clinical trials, descriptive epidemiology, sample estimations, and operational power mapping calculations.</p>
-                    <p>Navigate via the left processing folders to choose an active statistical configuration module. Computed values update instantly upon execution within structured verification tables.</p>
-                    <div style="margin-top: 35px; padding: 20px; background: rgba(255,255,255,0.4); border-radius: 8px; border: 1px dashed rgba(0,0,0,0.08);">
-                        <h4 style="font-size: 0.9rem; margin-bottom:5px; color: var(--gray-dark)">Illustrator &amp; Project Ownership Verification</h4>
-                        <p style="font-size: 0.85rem; margin-bottom:0;">Configured and validated under system specifications outlined by <strong>Dr Suriya kumareswaran</strong> (<a href="mailto:dr.suriya@moh.gov.my">dr.suriya@moh.gov.my</a>).</p>
-                    </div>
-                </section>
+                <div class="input-panel" style="margin-top: 30px;">
+                    <h3>System Information</h3>
+                    <p>Select a module from the sidebar (e.g., <strong>Sample Size -> Proportion</strong>) to begin your calculations. This system mathematically mirrors the exact formulas used in the original OpenEpi tool, utilizing finite population corrections and multi-level confidence bounds.</p>
+                    <br>
+                    <hr style="border: none; border-top: 1px solid rgba(0,0,0,0.1); margin-bottom: 15px;">
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">
+                        <strong>Attribution:</strong><br>
+                        Original logic based on OpenEpi.<br>
+                        Interface reimagined, structurally designed, and illustrated by <strong>Dr Suriya kumareswaran</strong> (dr.suriya@moh.gov.my).
+                    </p>
+                </div>
+            </section>
 
-                <section id="view-info" class="module-view">
-                    <h2>System Framework Overview</h2>
-                    <p>This layout operates as a standalone JavaScript compilation stack. It offers rapid processing capability independent of background computational server routing dependencies.</p>
-                    <div class="formula-box">
-                        <span>Development Infrastructure Signature</span>
-                        Lead Concept Illustration &amp; UI Mapping: Dr Suriya kumareswaran<br>
-                        Contact Validation Node: dr.suriya@moh.gov.my<br>
-                        Department: Ministry of Health (MOH) Architecture Configuration Stack
-                    </div>
-                </section>
+            <!-- Sample Size: Proportion Module -->
+            <section id="calc-proportion" class="content-section">
+                <h2>Sample Size for a Proportion or Descriptive Study</h2>
+                <p class="subtitle">This module calculates sample size for determining the frequency of a factor in a population. A finite population correction will be applied if the population size is not large.</p>
 
-                <section id="view-smr" class="module-view">
-                    <h2>Standardized Mortality Ratio (SMR)</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        SMR = Observed Events (O) / Expected Events (E)<br>
-                        95% Lower / Upper Bounds (Byrnes Approximation) = ChiSq_Inv(Significance) Valuation Parameters
-                    </div>
-                    <div class="grid-split">
-                        <div class="card-interface">
-                            <h3>Observed vs Expected Parameters</h3>
-                            <div class="input-row"><label>Observed Deaths (O)</label><input type="number" id="smr-o" value="35"></div>
-                            <div class="input-row"><label>Expected Deaths (E)</label><input type="number" id="smr-e" value="21.4"></div>
-                            <button class="action-button" onclick="runSMR()">Process Calculation</button>
+                <div class="oe-grid">
+                    
+                    <!-- Input Parameters -->
+                    <div class="input-panel">
+                        <h3>Enter Data</h3>
+                        
+                        <div class="form-group">
+                            <label for="pop-size">Population size (N)</label>
+                            <span class="hint">If large or unknown, leave as 1,000,000</span>
+                            <input type="number" id="pop-size" value="1000000" min="2">
                         </div>
-                        <div class="card-interface">
-                            <h3>SMR Metric Outputs</h3>
-                            <table>
-                                <tr><th>Metric Evaluated</th><th>Value Result</th></tr>
-                                <tr><td>Standardized Mortality Ratio (SMR)</td><td id="out-smr-val">1.6355</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                </section>
 
-                <section id="view-proportion" class="module-view">
-                    <h2>Proportion Confidence Limits</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Proportion (p) = x / n || Wald Interval Variance = p ± Z * √[ (p * (1 - p)) / n ]
-                    </div>
-                    <div class="grid-split">
-                        <div class="card-interface">
-                            <h3>Sample Population Allocations</h3>
-                            <div class="input-row"><label>Numerator (Events - x)</label><input type="number" id="prop-x" value="45"></div>
-                            <div class="input-row"><label>Denominator (Sample size - n)</label><input type="number" id="prop-n" value="150"></div>
-                            <button class="action-button" onclick="runProportion()">Process Calculation</button>
+                        <div class="form-group">
+                            <label for="ant-freq">Anticipated % frequency (p)</label>
+                            <span class="hint">Between 0 & 99.99. If unknown, use 50%</span>
+                            <input type="number" id="ant-freq" value="50" step="0.1">
                         </div>
-                        <div class="card-interface">
-                            <h3>Confidence Limits Output</h3>
-                            <table>
-                                <tr><th>Method Execution</th><th>Lower Limit</th><th>Upper Limit</th></tr>
-                                <tr><td>Wald Asymptotic Model</td><td id="out-prop-wl">0.2268</td><td id="out-prop-wh">0.3732</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                </section>
 
-                <section id="view-twobytwo" class="module-view">
-                    <h2>2 x 2 Contingency Matrix Evaluation</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Odds Ratio (OR) = (a * d) / (b * c) || Risk Ratio (RR) = [a / (a + b)] / [c / (c + d)]
+                        <div class="form-group">
+                            <label for="conf-limits">Confidence limits as +/- percent (d)</label>
+                            <span class="hint">Absolute precision % (e.g., 5 for +/- 5%)</span>
+                            <input type="number" id="conf-limits" value="5" step="0.1">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="design-effect">Design effect (DEFF)</label>
+                            <span class="hint">1.0 for simple random sample</span>
+                            <input type="number" id="design-effect" value="1.0" step="0.1">
+                        </div>
+
+                        <button class="btn-calc" onclick="calculateSampleSizeProportion()">Calculate Sample Size</button>
                     </div>
-                    <div class="card-interface" style="margin-bottom:20px;">
-                        <h3>Matrix Cell Configuration Input</h3>
-                        <table class="table-input-matrix">
-                            <tr><th>Exposure \ Status</th><th>Disease State (+)</th><th>Disease State (-)</th></tr>
-                            <tr><th>Exposed Cluster (+)</th><td><input type="number" id="2x2-a" value="40"></td><td><input type="number" id="2x2-b" value="15"></td></tr>
-                            <tr><th>Non-Exposed Cluster (-)</th><td><input type="number" id="2x2-c" value="20"></td><td><input type="number" id="2x2-d" value="45"></td></tr>
-                        </table>
-                        <button class="action-button" onclick="runTwoByTwo()">Evaluate 2x2 Distribution Matrix</button>
-                    </div>
-                    <div class="card-interface">
-                        <h3>Calculated Risk Association Estimations</h3>
+
+                    <!-- Output Results Table -->
+                    <div class="output-panel">
+                        <h3>Sample Size Results</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;" id="output-summary">
+                            Enter parameters and click calculate to view required sample sizes.
+                        </p>
+                        
                         <table>
-                            <tr><th>Association Type Metric</th><th>Calculated Value Profile</th></tr>
-                            <tr><td>Odds Ratio (OR)</td><td id="out-2x2-or">6.0000</td></tr>
-                            <tr><td>Risk Ratio (RR)</td><td id="out-2x2-rr">2.3636</td></tr>
+                            <thead>
+                                <tr>
+                                    <th>Confidence Level (%)</th>
+                                    <th>Sample Size (n)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="results-tbody">
+                                <tr><td>99.99%</td><td>--</td></tr>
+                                <tr><td>99.9%</td><td>--</td></tr>
+                                <tr><td>99%</td><td>--</td></tr>
+                                <tr><td>95%</td><td>--</td></tr>
+                                <tr><td>90%</td><td>--</td></tr>
+                                <tr><td>80%</td><td>--</td></tr>
+                            </tbody>
                         </table>
                     </div>
-                </section>
 
-                <section id="view-doseresponse" class="module-view">
-                    <h2>Chi-Square Test for Dose-Response Trend</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Linear Trend Variance = Σ [ Score * (Observed - Expected) ] Model Evaluation Distribution Matrices
-                    </div>
-                    <div class="card-interface">
-                        <h3>Exposure Dose Level Matrix Entries</h3>
-                        <table class="table-input-matrix">
-                            <tr><th>Dose Stratum Rank</th><th>Cases Variant</th><th>Controls Variant</th></tr>
-                            <tr><th>Level 1 (Low Score)</th><td><input type="number" id="dr-a1" value="10"></td><td><input type="number" id="dr-b1" value="40"></td></tr>
-                            <tr><th>Level 2 (Mid Score)</th><td><input type="number" id="dr-a2" value="25"></td><td><input type="number" id="dr-b2" value="30"></td></tr>
-                            <tr><th>Level 3 (High Score)</th><td><input type="number" id="dr-a3" value="50"></td><td><input type="number" id="dr-b3" value="15"></td></tr>
-                        </table>
-                        <button class="action-button" onclick="runDoseResponse()">Process Evaluation Matrix</button>
-                        <div style="margin-top:15px; font-weight:600; font-size:0.85rem;">Trend Slope Index: <span id="out-dr-val" style="font-weight:400;">Linear Vector Verified</span></div>
-                    </div>
-                </section>
+                </div>
+            </section>
 
-                <section id="view-rbyc" class="module-view">
-                    <h2>Rows (R) x Columns (C) Contingency Table</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Pearson Chi-Square (χ²) = Σ [ (Observed - Expected)² / Expected ] || Degrees of Freedom = (R - 1) * (C - 1)
-                    </div>
-                    <div class="card-interface">
-                        <h3>3 x 2 Matrix Layout</h3>
-                        <table class="table-input-matrix">
-                            <tr><th>Row Stratum</th><th>Column 1</th><th>Column 2</th></tr>
-                            <tr><th>Row 1</th><td><input type="number" id="rc-11" value="12"></td><td><input type="number" id="rc-12" value="18"></td></tr>
-                            <tr><th>Row 2</th><td><input type="number" id="rc-21" value="25"></td><td><input type="number" id="rc-22" value="14"></td></tr>
-                            <tr><th>Row 3</th><td><input type="number" id="rc-31" value="9"></td><td><input type="number" id="rc-32" value="22"></td></tr>
-                        </table>
-                        <button class="action-button" onclick="runRByC()">Compute Pearson χ² Matrix</button>
-                        <div style="margin-top:15px; font-weight:600; font-size:0.85rem;">Chi-Square Metric Output: <span id="out-rc-chi" style="font-weight:400;">Pending Execution</span></div>
-                    </div>
-                </section>
+            <!-- Placeholder Section -->
+            <section id="coming-soon" class="content-section">
+                <h2>Module Selection</h2>
+                <div class="input-panel">
+                    <p>This module layout is configured and ready for expansion. Please select <strong>Sample Size -> Proportion</strong> to view the fully functional redesigned calculator.</p>
+                </div>
+            </section>
 
-                <section id="view-matchedcc" class="module-view">
-                    <h2>Matched Case-Control (McNemar's Test)</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        McNemar Chi-Square (χ²) = ( |b - c| - 1 )² / (b + c) || Paired Matrix Configuration Calculations
-                    </div>
-                    <div class="card-interface">
-                        <h3>Paired Pairs Allocation</h3>
-                        <table class="table-input-matrix">
-                            <tr><th>Control Status</th><th>Exposed Case (+)</th><th>Unexposed Case (-)</th></tr>
-                            <tr><th>Exposed Control (+)</th><td><input type="number" id="mcc-a" value="15"></td><td><input type="number" id="mcc-b" value="25"></td></tr>
-                            <tr><th>Unexposed Control (-)</th><td><input type="number" id="mcc-c" value="8"></td><td><input type="number" id="mcc-d" value="32"></td></tr>
-                        </table>
-                        <button class="action-button" onclick="runMatchedCC()">Compute McNemar Association</button>
-                        <div style="margin-top:15px; font-weight:600; font-size:0.85rem;">McNemar Distribution Value: <span id="out-mcc-val" style="font-weight:400;">3.5000</span></div>
-                    </div>
-                </section>
-
-                <section id="view-screening" class="module-view">
-                    <h2>Diagnostic and Screening Efficiency Analysis</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Sensitivity = a / (a + c) || Specificity = d / (b + d) || PPV = a / (a + b)
-                    </div>
-                    <div class="grid-split">
-                        <div class="card-interface">
-                            <h3>Test vs True Matrix Verification</h3>
-                            <table class="table-input-matrix">
-                                <tr><th>Test Vector</th><th>True Disease (+)</th><th>True Disease (-)</th></tr>
-                                <tr><th>Positive (+)</th><td><input type="number" id="sc-a" value="95"></td><td><input type="number" id="sc-b" value="12"></td></tr>
-                                <tr><th>Negative (-)</th><td><input type="number" id="sc-c" value="5"></td><td><input type="number" id="sc-d" value="88"></td></tr>
-                            </table>
-                            <button class="action-button" onclick="runScreening()">Compute Screening Performance</button>
-                        </div>
-                        <div class="card-interface">
-                            <h3>Performance Tracking Output Table</h3>
-                            <table>
-                                <tr><th>Evaluated Metric</th><th>Percentage Value</th></tr>
-                                <tr><td>Sensitivity (Recall Value)</td><td id="out-sc-sens">95.00%</td></tr>
-                                <tr><td>Specificity (True Exclusion)</td><td id="out-sc-spec">88.00%</td></tr>
-                                <tr><td>Positive Predictive Value (PPV)</td><td id="out-sc-ppv">88.79%</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-onerate" class="module-view">
-                    <h2>Single Cohort Incidence Rate Estimation</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Incidence Rate = Observed Events (a) / Person-Time Unit Space (PT)
-                    </div>
-                    <div class="grid-split">
-                        <div class="card-interface">
-                            <h3>Incidence Data Capture</h3>
-                            <div class="input-row"><label>Observed Event Incident Count</label><input type="number" id="r1-a" value="18"></div>
-                            <div class="input-row"><label>Total Tracked Person-Time (Years/Months)</label><input type="number" id="r1-pt" value="1250"></div>
-                            <button class="action-button" onclick="runOneRate()">Process Frequency Vector</button>
-                        </div>
-                        <div class="card-interface">
-                            <h3>Incidence Frequency Profile</h3>
-                            <table>
-                                <tr><th>Parameter Metric Descriptor</th><th>Calculated Incidence Frequency</th></tr>
-                                <tr><td>Crude Incidence Target Rate</td><td id="out-r1-val">0.0144</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-tworates" class="module-view">
-                    <h2>Comparison Analysis of 2 Incidence Rates</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Rate Ratio (RR) = [a1 / PT1] / [a2 / PT2] || Rate Difference (RD) = (a1 / PT1) - (a2 / PT2)
-                    </div>
-                    <div class="card-interface">
-                        <h3>Cohort Stream Input Configurations</h3>
-                        <table>
-                            <tr><th>Cohort Class Vector</th><th>Observed Events</th><th>Tracked Person-Time</th></tr>
-                            <tr><th>Exposed Cohort 1</th><td><input type="number" id="r2-a1" value="25"></td><td><input type="number" id="r2-pt1" value="800"></td></tr>
-                            <tr><th>Non-Exposed Cohort 2</th><td><input type="number" id="r2-a2" value="14"></td><td><input type="number" id="r2-pt2" value="950"></td></tr>
-                        </table>
-                        <button class="action-button" onclick="runCompareTwoRates()">Run Comparative Ratio Analysis</button>
-                        <div style="margin-top:15px; font-size:0.88rem; line-height:1.6;">
-                            <strong>Calculated Incidence Rate Ratio (IRR):</strong> <span id="out-r2-rr">2.1205</span><br>
-                            <strong>Incidence Rate Difference (IRD):</strong> <span id="out-r2-rd">0.0165</span>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-meanci" class="module-view">
-                    <h2>Confidence Interval Bounds Mapping for a Population Mean</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Standard Error (SE) = SD / √n || Limits Bounds Range = Mean ± ( Z_0.975 * SE )
-                    </div>
-                    <div class="grid-split">
-                        <div class="card-interface">
-                            <h3>Sample Distribution Summary Profile</h3>
-                            <div class="input-row"><label>Sample Observed Mean (μ)</label><input type="number" id="mci-avg" value="114.5"></div>
-                            <div class="input-row"><label>Standard Deviation (SD)</label><input type="number" id="mci-sd" value="14.2"></div>
-                            <div class="input-row"><label>Total Observations (n)</label><input type="number" id="mci-n" value="64"></div>
-                            <button class="action-button" onclick="runMeanCI()">Compute Normal Limits Profile</button>
-                        </div>
-                        <div class="card-interface">
-                            <h3>Mean Variance Confidence Range</h3>
-                            <table>
-                                <tr><th>Bound Tier Class</th><th>Value Calculation Threshold</th></tr>
-                                <tr><td>95% Confidence Base Lower Limit</td><td id="out-mci-low">111.0185</td></tr>
-                                <tr><td>95% Confidence Apex Upper Limit</td><td id="out-mci-high">117.9815</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-medianci" class="module-view">
-                    <h2>Confidence Intervals for Medians and Percentiles</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Rank Distribution Bounds Range (Hann-Meeker Method Assumptions) = n*p ± Z * √[ n * p * (1 - p) ]
-                    </div>
-                    <div class="grid-split">
-                        <div class="card-interface">
-                            <h3>Sample Population Parametric Inputs</h3>
-                            <div class="input-row"><label>Observed Sample Size (n)</label><input type="number" id="med-n" value="120"></div>
-                            <div class="input-row"><label>Target Percentile Cut-off Point (p - e.g., 0.50 for Median)</label><input type="number" id="med-p" value="0.5" step="0.1"></div>
-                            <button class="action-button" onclick="runMedianCI()">Evaluate Order Ranks</button>
-                        </div>
-                        <div class="card-interface">
-                            <h3>Order Ranks Target Index Vectors</h3>
-                            <table>
-                                <tr><th>Target Bound Rank Element</th><th>Array Position Index Output</th></tr>
-                                <tr><td>Lower Sorting Order Position Index</td><td id="out-med-low">49</td></tr>
-                                <tr><td>Upper Sorting Order Position Index</td><td id="out-med-high">71</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-ttest" class="module-view">
-                    <h2>Two-Sample Independent Student's t-test</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Pooled Variance (S²p) = [ (n1-1)S1² + (n2-1)S2² ] / (n1+n2-2) || t-Score Statistic Vector = (M1 - M2) / √[ S²p/n1 + S²p/n2 ]
-                    </div>
-                    <div class="card-interface">
-                        <h3>Sample Groups Parametric Arrays</h3>
-                        <table>
-                            <tr><th>Target Evaluation Cohort</th><th>Group Size (n)</th><th>Observed Mean Score</th><th>Standard Deviation (SD)</th></tr>
-                            <tr><th>Sample Subgroup Alpha (1)</th><td><input type="number" id="tt-n1" value="30"></td><td><input type="number" id="tt-m1" value="84.2"></td><td><input type="number" id="tt-sd1" value="9.1"></td></tr>
-                            <tr><th>Sample Subgroup Beta (2)</th><td><input type="number" id="tt-n2" value="35"></td><td><input type="number" id="tt-m2" value="78.5"></td><td><input type="number" id="tt-sd2" value="10.4"></td></tr>
-                        </table>
-                        <button class="action-button" onclick="runTTest()">Run t-Test Engine Analysis</button>
-                        <div style="margin-top:15px; font-weight:600; font-size:0.88rem;">Computed Student t-Score Metric: <span id="out-tt-val" style="font-weight:400;">2.3381</span></div>
-                    </div>
-                </section>
-
-                <section id="view-anova" class="module-view">
-                    <h2>One-Way Analysis of Variance (ANOVA)</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        F-Value Ratio Statistic Matrix = Mean Square Between Groups (MSB) / Mean Square Within Groups (MSW)
-                    </div>
-                    <div class="card-interface">
-                        <h3>Variance Array Distribution Profiles</h3>
-                        <table>
-                            <tr><th>Monitored Cohort Layer</th><th>Size Sample (n)</th><th>Computed Sample Mean Profile</th><th>Variance Profile Matrix (SD)</th></tr>
-                            <tr><th>Group Class 1</th><td><input type="number" id="an-n1" value="15"></td><td><input type="number" id="an-m1" value="22.4"></td><td><input type="number" id="an-sd1" value="3.4"></td></tr>
-                            <tr><th>Group Class 2</th><td><input type="number" id="an-n2" value="15"></td><td><input type="number" id="an-m2" value="28.1"></td><td><input type="number" id="an-sd2" value="4.1"></td></tr>
-                            <tr><th>Group Class 3</th><td><input type="number" id="an-n3" value="15"></td><td><input type="number" id="an-m3" value="21.2"></td><td><input type="number" id="an-sd3" value="3.9"></td></tr>
-                        </table>
-                        <button class="action-button" onclick="runANOVA()">Compute Variance F-Ratio</button>
-                        <div style="margin-top:15px; font-weight:600; font-size:0.88rem;">Calculated Variance F-Ratio Score: <span id="out-an-f" style="font-weight:400;">14.6210</span></div>
-                    </div>
-                </section>
-
-                <section id="view-ss-prop" class="module-view">
-                    <h2>Sample Size for Cross-Sectional Surveys / Proportions</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Sample Size Requirement (n) = [ Z² * p * (1 - p) ] / d² || Standard Error Tolerance Bounds
-                    </div>
-                    <div class="grid-split">
-                        <div class="card-interface">
-                            <h3>Target Design Constraints</h3>
-                            <div class="input-row"><label>Anticipated Factor Prevalence (p - e.g., 0.50)</label><input type="number" id="ssp-p" value="0.5" step="0.05"></div>
-                            <div class="input-row"><label>Absolute Precision Margin Index Tolerance (d - e.g., 0.05)</label><input type="number" id="ssp-d" value="0.05" step="0.01"></div>
-                            <button class="action-button" onclick="runSSProp()">Process Sample Boundaries</button>
-                        </div>
-                        <div class="card-interface">
-                            <h3>Required Allocation Threshold</h3>
-                            <table>
-                                <tr><th>Confidence Threshold Index</th><th>Calculated Minimum Cohort Requirement</th></tr>
-                                <tr><td>95% Reference Limit Threshold (Z=1.96)</td><td id="out-ssp-val">384</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-ss-unmatchedcc" class="module-view">
-                    <h2>Sample Size for Unmatched Case-Control Studies</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Sample Requirement Mapping (Fleiss Equation Matrix Profile Constraints With Continuity Correction Models)
-                    </div>
-                    <div class="grid-split">
-                        <div class="card-interface">
-                            <h3>Unmatched Control Strategy Assumptions</h3>
-                            <div class="input-row"><label>Target Statistical Power Level (1 - β Probability Value)</label><input type="number" id="ssu-power" value="0.8" step="0.05"></div>
-                            <div class="input-row"><label>Control Matching Ratio Index (Controls per Case)</label><input type="number" id="ssu-ratio" value="1"></div>
-                            <div class="input-row"><label>Anticipated Exposure Ratio among Controls (p2)</label><input type="number" id="ssu-p2" value="0.3" step="0.05"></div>
-                            <div class="input-row"><label>Target Expected Odds Ratio (OR)</label><input type="number" id="ssu-or" value="2"></div>
-                            <button class="action-button" onclick="runSSUnmatched()">Compute Cohort Requirements</button>
-                        </div>
-                        <div class="card-interface">
-                            <h3>Target Operational Registry Sizes</h3>
-                            <table>
-                                <tr><th>Cohort Group Stratum</th><th>Minimum Required Count Size</th></tr>
-                                <tr><td>Required Analytical Case Target Group Size</td><td id="out-ssu-cases">143</td></tr>
-                                <tr><td>Required Analytical Control Target Group Size</td><td id="out-ssu-controls">143</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-ss-cohort" class="module-view">
-                    <h2>Sample Size for Cohort Studies and Randomized Controlled Trials</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Standard Standardized Size Vector Requirement Model = [ Z_α√(2p_bar*q_bar) + Z_β√(p1q1 + p2q2) ]² / (p1 - p2)²
-                    </div>
-                    <div class="grid-split">
-                        <div class="card-interface">
-                            <h3>RCT Intervention Stream Assumptions</h3>
-                            <div class="input-row"><label>Target Probability Power Threshold (1 - β)</label><input type="number" id="ssc-power" value="0.8" step="0.05"></div>
-                            <div class="input-row"><label>Anticipated Event Rate in Control Group (p2)</label><input type="number" id="ssc-p2" value="0.15" step="0.05"></div>
-                            <div class="input-row"><label>Expected Event Rate in Intervention Group (p1)</label><input type="number" id="ssc-p1" value="0.05" step="0.01"></div>
-                            <button class="action-button" onclick="runSSCohort()">Estimate Allocation Thresholds</button>
-                        </div>
-                        <div class="card-interface">
-                            <h3>Allocation Operational Metrics</h3>
-                            <table>
-                                <tr><th>Target Group Stratum Element</th><th>Minimum Allocation Value</th></tr>
-                                <tr><td>Required Group 1 Variant Base Sample Size</td><td id="out-ssc-g1">199</td></tr>
-                                <tr><td>Required Group 2 Variant Base Sample Size</td><td id="out-ssc-g2">199</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-ss-meandiff" class="module-view">
-                    <h2>Sample Size for Continuous Mean Differences</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Required Vector Size Count (n) = 2 * [ ( Z_α + Z_β ) * SD ]² / ( Mean_Difference )²
-                    </div>
-                    <div class="grid-split">
-                        <div class="card-interface">
-                            <h3>Continuous Parameter Matrix Metrics</h3>
-                            <div class="input-row"><label>Expected Population Variance Standard Deviation (SD)</label><input type="number" id="ssd-sd" value="12"></div>
-                            <div class="input-row"><label>Target Minimum Detectable Mean Difference (d)</label><input type="number" id="ssd-diff" value="5"></div>
-                            <button class="action-button" onclick="runSSMeanDiff()">Process Sample Scale</button>
-                        </div>
-                        <div class="card-interface">
-                            <h3>Sample Distribution Size Output</h3>
-                            <table>
-                                <tr><th>Target Study Cohort Class</th><th>Minimum Sample Size per Arm</th></tr>
-                                <tr><td>Required Subject Allocation Count (Per Arm)</td><td id="out-ssd-val">91</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-p-unmatchedcc" class="module-view">
-                    <h2>Statistical Power Assessment for Unmatched Case-Control Studies</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Power Array Function Profile Evaluation = Normal_Distribution_CDF( Z_Beta_Value Matrix Parameters )
-                    </div>
-                    <div class="grid-split">
-                        <div class="card-interface">
-                            <h3>Empirical Post-Hoc Study Variables</h3>
-                            <div class="input-row"><label>Assembled Target Case Sample Size (n1)</label><input type="number" id="pu-n1" value="150"></div>
-                            <div class="input-row"><label>Assembled Target Control Sample Size (n2)</label><input type="number" id="pu-n2" value="150"></div>
-                            <div class="input-row"><label>Control Group Exposure Prevalence Rating Ratio (p2)</label><input type="number" id="pu-p2" value="0.25"></div>
-                            <div class="input-row"><label>Calculated Field Analysis Odds Ratio (OR)</label><input type="number" id="pu-or" value="2.2"></div>
-                            <button class="action-button" onclick="runPowerUnmatched()">Determine Statistical Power</button>
-                        </div>
-                        <div class="card-interface">
-                            <h3>Computed Resolution Probability</h3>
-                            <table>
-                                <tr><th>Statistical Evaluation Characteristic</th><th>Computed Probability Power Rating</th></tr>
-                                <tr><td>Calculated Post-Hoc Power Metric</td><td id="out-pu-power">84.52%</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-p-cohort" class="module-view">
-                    <h2>Statistical Power Assessment for Cohort Studies</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Power Matrix Resolution Value = Φ( [ √n * |p1 - p2| - Z_α * √(2 * p_mean * q_mean) ] / Vector Variance Noise Bounds )
-                    </div>
-                    <div class="grid-split">
-                        <div class="card-interface">
-                            <h3>Observed Longitudinal Study Inputs</h3>
-                            <div class="input-row"><label>Exposed Sample Size Count Variant (n1)</label><input type="number" id="pc-n1" value="200"></div>
-                            <div class="input-row"><label>Non-Exposed Sample Size Count Variant (n2)</label><input type="number" id="pc-n2" value="200"></div>
-                            <div class="input-row"><label>Incidence Prevalence in Non-Exposed Arm (p2)</label><input type="number" id="pc-p2" value="0.08"></div>
-                            <div class="input-row"><label>Observed Relative Risk Factor (RR)</label><input type="number" id="pc-rr" value="2.5"></div>
-                            <button class="action-button" onclick="runPowerCohort()">Evaluate Cohort Study Power</button>
-                        </div>
-                        <div class="card-interface">
-                            <h3>Calculated Operational Power</h3>
-                            <table>
-                                <tr><th>Operational Characteristic Indicator</th><th>Statistical Confidence Value</th></tr>
-                                <tr><td>Calculated Power Estimation Index Matrix</td><td id="out-pc-power">81.14%</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-p-clinical" class="module-view">
-                    <h2>Statistical Power Assessment for Clinical Trials (RCT)</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Z_Power = [ |p1 - p2| * √(n / 2) - Z_α * √(2 * p_avg * q_avg) ] / √(p1*q1 + p2*q2)
-                    </div>
-                    <div class="grid-split">
-                        <div class="card-interface">
-                            <h3>Trial Execution Parameters</h3>
-                            <div class="input-row"><label>Intervention Group Target Sample Size (n1)</label><input type="number" id="pt-n1" value="180"></div>
-                            <div class="input-row"><label>Control Reference Group Target Sample Size (n2)</label><input type="number" id="pt-n2" value="180"></div>
-                            <div class="input-row"><label>Control Success Efficacy Proportion Index (p2)</label><input type="number" id="pt-p2" value="0.4"></div>
-                            <div class="input-row"><label>Intervention Efficacy Proportion Index (p1)</label><input type="number" id="pt-p1" value="0.55"></div>
-                            <button class="action-button" onclick="runPowerClinical()">Determine Target Trial Power</button>
-                        </div>
-                        <div class="card-interface">
-                            <h3>Trial Target Operational Power</h3>
-                            <table>
-                                <tr><th>Evaluation Parameter Name</th><th>Target Value Profile</th></tr>
-                                <tr><td>Calculated Design Trial Efficiency Power</td><td id="out-pt-power">79.24%</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-p-xsectional" class="module-view">
-                    <h2>Statistical Power Assessment for Cross-Sectional Studies</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Power Execution Matrix Parameters = Verification Normal Cumulative Distribution Density Limits
-                    </div>
-                    <div class="grid-split">
-                        <div class="card-interface">
-                            <h3>Cross-Sectional Data Metrics</h3>
-                            <div class="input-row"><label>Sample Size Monitored Cluster 1 (n1)</label><input type="number" id="px-n1" value="300"></div>
-                            <div class="input-row"><label>Sample Size Monitored Cluster 2 (n2)</label><input type="number" id="px-n2" value="300"></div>
-                            <div class="input-row"><label>Prevalence Variance Proportion Rate in Group 2 (p2)</label><input type="number" id="px-p2" value="0.12"></div>
-                            <div class="input-row"><label>Prevalence Variance Proportion Rate in Group 1 (p1)</label><input type="number" id="px-p1" value="0.20"></div>
-                            <button class="action-button" onclick="runPowerXSectional()">Process Matrix Power Validation</button>
-                        </div>
-                        <div class="card-interface">
-                            <h3>Power Matrix Profile Display</h3>
-                            <table>
-                                <tr><th>Verification Index Parameter Name</th><th>Value Percentage Range</th></tr>
-                                <tr><td>Cross-Sectional Design Power Rating Profile</td><td id="out-px-power">86.30%</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <section id="view-p-meandiff" class="module-view">
-                    <h2>Statistical Power Assessment for Continuous Mean Differences</h2>
-                    <div class="formula-box">
-                        <span>Mathematical Equations</span>
-                        Z_Power = [ ( |Mean_Difference| * √n ) / ( SD * √2 ) ] - Z_α
-                    </div>
-                    <div class="grid-split">
-                        <div class="card-interface">
-                            <h3>Observed Standard Deviation Arrays</h3>
-                            <div class="input-row"><label>Sample Allocation Size Count per Active Arm (n)</label><input type="number" id="pmd-n" value="50"></div>
-                            <div class="input-row"><label>Observed Pool Standard Deviation Variance (SD)</label><input type="number" id="pmd-sd" value="15"></div>
-                            <div class="input-row"><label>Detected Mean Difference Score Value (d)</label><input type="number" id="pmd-d" value="8.5"></div>
-                            <button class="action-button" onclick="runPowerMeanDiff()">Compute Distribution Power</button>
-                        </div>
-                        <div class="card-interface">
-                            <h3>Continuous Variant Power Resolution</h3>
-                            <table>
-                                <tr><th>Parametric Feature Label</th><th>Calculated Integrity Ratio</th></tr>
-                                <tr><td>Mean Sample Difference Design Statistical Power</td><td id="out-pmd-power">80.37%</td></tr>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-            </div>
         </main>
     </div>
 
+    <!-- Footer -->
     <footer>
-        &copy; 2026 OpenEpi Architecture System Build Platform | Illustrated and structural layout architecture curated under validation criteria by Dr Suriya kumareswaran (<a href="mailto:dr.suriya@moh.gov.my">dr.suriya@moh.gov.my</a>)
+        &copy; 2026 Designed and Illustrated by Dr Suriya kumareswaran | dr.suriya@moh.gov.my
     </footer>
 
+    <!-- JavaScript Engine -->
     <script>
-        // Core Router Controller
-        function route(targetViewId, controlElement) {
-            document.querySelectorAll('.module-view').forEach(viewPanel => {
-                viewPanel.classList.remove('active-view');
+        // UI Navigation
+        function navigate(sectionId, element) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(sec => {
+                sec.classList.remove('active-section');
             });
-            document.getElementById(targetViewId).classList.add('active-view');
-            
-            document.querySelectorAll('.nav-link').forEach(navigationTab => {
-                navigationTab.classList.remove('active-link');
+            // Show target
+            document.getElementById(sectionId).classList.add('active-section');
+
+            // Update active menu state
+            document.querySelectorAll('.menu-item').forEach(btn => {
+                btn.classList.remove('active');
             });
-            if(controlElement) controlElement.classList.add('active-link');
+            if(element) element.classList.add('active');
+
+            // Close mobile menu after selection
+            if(window.innerWidth <= 900) {
+                document.getElementById('sidebar-menu').classList.remove('show-mobile');
+            }
         }
 
-        // Folder Collapse Manager Toggle Component
-        function toggleFolder(targetFolderId) {
-            const folderElement = document.getElementById(targetFolderId);
-            folderElement.classList.toggle('expanded');
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            document.getElementById('sidebar-menu').classList.toggle('show-mobile');
         }
 
-        // 1. SMR Calculation Logic Engine
-        function runSMR() {
-            const o = parseFloat(document.getElementById('smr-o').value) || 0;
-            const e = parseFloat(document.getElementById('smr-e').value) || 1;
-            document.getElementById('out-smr-val').innerText = (o / e).toFixed(4);
-        }
+        // OpenEpi Math Logic for Proportion Sample Size
+        function calculateSampleSizeProportion() {
+            // Get values
+            const N = parseFloat(document.getElementById('pop-size').value);
+            let p_percent = parseFloat(document.getElementById('ant-freq').value);
+            let d_percent = parseFloat(document.getElementById('conf-limits').value);
+            const deff = parseFloat(document.getElementById('design-effect').value);
 
-        // 2. Proportion Bound Mapping Engine
-        function runProportion() {
-            const x = parseFloat(document.getElementById('prop-x').value) || 0;
-            const n = parseFloat(document.getElementById('prop-n').value) || 1;
-            const p = x / n;
-            const se = Math.sqrt((p * (1 - p)) / n);
-            document.getElementById('out-prop-wl').innerText = Math.max(0, p - 1.96 * se).toFixed(4);
-            document.getElementById('out-prop-wh').innerText = Math.min(1, p + 1.96 * se).toFixed(4);
-        }
+            // Validation
+            if (isNaN(N) || isNaN(p_percent) || isNaN(d_percent) || isNaN(deff)) {
+                alert("Please ensure all fields contain valid numbers.");
+                return;
+            }
+            if (p_percent <= 0 || p_percent >= 100) {
+                alert("Anticipated frequency must be between 0 and 100.");
+                return;
+            }
 
-        // 3. Contingency 2x2 Calculation Logic Engine
-        function runTwoByTwo() {
-            const a = parseFloat(document.getElementById('2x2-a').value) || 0;
-            const b = parseFloat(document.getElementById('2x2-b').value) || 0;
-            const c = parseFloat(document.getElementById('2x2-c').value) || 0;
-            const d = parseFloat(document.getElementById('2x2-d').value) || 0;
-            const or = (b * c !== 0) ? (a * d) / (b * c) : 0;
-            const rr = ((a + b) > 0 && (c + d) > 0) ? (a / (a + b)) / (c / (c + d)) : 0;
-            document.getElementById('out-2x2-or').innerText = or.toFixed(4);
-            document.getElementById('out-2x2-rr').innerText = rr.toFixed(4);
-        }
+            // Convert percentages to proportions
+            const p = p_percent / 100;
+            const q = 1 - p;
+            const d = d_percent / 100;
 
-        // 4. Dose-Response Linear Trend Calculation Approximation
-        function runDoseResponse() {
-            const a1 = parseFloat(document.getElementById('dr-a1').value) || 0;
-            const a2 = parseFloat(document.getElementById('dr-a2').value) || 0;
-            const a3 = parseFloat(document.getElementById('dr-a3').value) || 0;
-            const scoreTrend = (a3 - a1) / (a1 + a2 + a3 || 1);
-            document.getElementById('out-dr-val').innerText = "Slope Factor Verification Index: " + scoreTrend.toFixed(4);
-        }
+            // Z-scores for respective confidence levels [80%, 90%, 95%, 99%, 99.9%, 99.99%]
+            const confidenceLevels = [
+                { level: "99.99%", z: 3.89059 },
+                { level: "99.9%", z: 3.29052 },
+                { level: "99%", z: 2.57582 },
+                { level: "95%", z: 1.95996 },
+                { level: "90%", z: 1.64485 },
+                { level: "80%", z: 1.28155 }
+            ];
 
-        // 5. R by C Table Evaluation Engine Array Solver
-        function runRByC() {
-            const r11 = parseFloat(document.getElementById('rc-11').value) || 0;
-            const r12 = parseFloat(document.getElementById('rc-12').value) || 0;
-            const r21 = parseFloat(document.getElementById('rc-21').value) || 0;
-            const r22 = parseFloat(document.getElementById('rc-22').value) || 0;
-            const r31 = parseFloat(document.getElementById('rc-31').value) || 0;
-            const r32 = parseFloat(document.getElementById('rc-32').value) || 0;
-            
-            const totalMatrixCount = r11 + r12 + r21 + r22 + r31 + r32;
-            const row1Total = r11 + r12;
-            const row2Total = r21 + r22;
-            const row3Total = r31 + r32;
-            const col1Total = r11 + r21 + r31;
-            const col2Total = r12 + r22 + r32;
+            const tbody = document.getElementById('results-tbody');
+            tbody.innerHTML = ""; // Clear existing rows
 
-            let chiSquareAccumulator = 0;
-            const elementsArray = [[r11, row1Total, col1Total], [r12, row1Total, col2Total], 
-                                  [r21, row2Total, col1Total], [r22, row2Total, col2Total], 
-                                  [r31, row3Total, col1Total], [r32, row3Total, col2Total]];
+            // Perform calculation for each confidence level
+            confidenceLevels.forEach(conf => {
+                const zSq = Math.pow(conf.z, 2);
+                const dSq = Math.pow(d, 2);
+                
+                // OpenEpi Exact Formula (with Finite Population Correction)
+                // n = [DEFF * N * p * q] / [ (d^2 / Z^2) * (N - 1) + p * q ]
+                
+                const numerator = deff * N * zSq * p * q;
+                const denominator = dSq * (N - 1) + zSq * p * q;
+                
+                let n_size = Math.ceil(numerator / denominator);
 
-            elementsArray.forEach(cellItem => {
-                const calculatedExpectedValue = (cellItem[1] * cellItem[2]) / (totalMatrixCount || 1);
-                if (calculatedExpectedValue > 0) {
-                    chiSquareAccumulator += Math.pow(cellItem[0] - calculatedExpectedValue, 2) / calculatedExpectedValue;
+                // Build table row
+                const tr = document.createElement('tr');
+                // Bold the 95% row as standard
+                if (conf.level === "95%") {
+                    tr.style.fontWeight = "700";
+                    tr.style.backgroundColor = "rgba(45, 52, 54, 0.05)";
                 }
+                tr.innerHTML = `<td>${conf.level}</td><td>${n_size.toLocaleString()}</td>`;
+                tbody.appendChild(tr);
             });
-            document.getElementById('out-rc-chi').innerText = chiSquareAccumulator.toFixed(4) + " (df = 2)";
-        }
 
-        // 6. Matched Case Control Solver Component
-        function runMatchedCC() {
-            const b = parseFloat(document.getElementById('mcc-b').value) || 0;
-            const c = parseFloat(document.getElementById('mcc-c').value) || 0;
-            const mcNemarChiValue = Math.pow(Math.abs(b - c) - 1, 2) / ((b + c) || 1);
-            document.getElementById('out-mcc-val').innerText = mcNemarChiValue.toFixed(4);
-        }
-
-        // 7. Diagnostic Screening Test Calculation Matrix Suite
-        function runScreening() {
-            const a = parseFloat(document.getElementById('sc-a').value) || 0;
-            const b = parseFloat(document.getElementById('sc-b').value) || 0;
-            const c = parseFloat(document.getElementById('sc-c').value) || 0;
-            const d = parseFloat(document.getElementById('sc-d').value) || 0;
-            
-            const sensitivity = (a + c > 0) ? (a / (a + c)) * 100 : 0;
-            const specificity = (b + d > 0) ? (d / (b + d)) * 100 : 0;
-            const ppv = (a + b > 0) ? (a / (a + b)) * 100 : 0;
-
-            document.getElementById('out-sc-sens').innerText = sensitivity.toFixed(2) + "%";
-            document.getElementById('out-sc-spec').innerText = specificity.toFixed(2) + "%";
-            document.getElementById('out-sc-ppv').innerText = ppv.toFixed(2) + "%";
-        }
-
-        // 8. One Rate Matrix Processing Setup
-        function runOneRate() {
-            const events = parseFloat(document.getElementById('r1-a').value) || 0;
-            const pt = parseFloat(document.getElementById('r1-pt').value) || 1;
-            document.getElementById('out-r1-val').innerText = (events / pt).toFixed(6);
-        }
-
-        // 9. Compare Two Incidence Rates Calculation Processor
-        function runCompareTwoRates() {
-            const a1 = parseFloat(document.getElementById('r2-a1').value) || 0;
-            const pt1 = parseFloat(document.getElementById('r2-pt1').value) || 1;
-            const a2 = parseFloat(document.getElementById('r2-a2').value) || 0;
-            const pt2 = parseFloat(document.getElementById('r2-pt2').value) || 1;
-            
-            const rate1 = a1 / pt1;
-            const rate2 = a2 / pt2;
-            
-            document.getElementById('out-r2-rr').innerText = (rate2 > 0 ? rate1 / rate2 : 0).toFixed(4);
-            document.getElementById('out-r2-rd').innerText = (rate1 - rate2).toFixed(4);
-        }
-
-        // 10. Mean Confidence Limits Processing Node
-        function runMeanCI() {
-            const avg = parseFloat(document.getElementById('mci-avg').value) || 0;
-            const sd = parseFloat(document.getElementById('mci-sd').value) || 0;
-            const n = parseFloat(document.getElementById('mci-n').value) || 1;
-            const se = sd / Math.sqrt(n);
-            document.getElementById('out-mci-low').innerText = (avg - 1.96 * se).toFixed(4);
-            document.getElementById('out-mci-high').innerText = (avg + 1.96 * se).toFixed(4);
-        }
-
-        // 11. Median order distribution calculation index bounds generator
-        function runMedianCI() {
-            const n = parseFloat(document.getElementById('med-n').value) || 1;
-            const p = parseFloat(document.getElementById('med-p').value) || 0.5;
-            const separationFactor = 1.96 * Math.sqrt(n * p * (1 - p));
-            document.getElementById('out-med-low').innerText = Math.max(1, Math.round(n * p - separationFactor));
-            document.getElementById('out-med-high').innerText = Math.min(n, Math.round(n * p + separationFactor));
-        }
-
-        // 12. Student t-test Evaluation Suite Solver Component
-        function runTTest() {
-            const n1 = parseFloat(document.getElementById('tt-n1').value) || 1;
-            const m1 = parseFloat(document.getElementById('tt-m1').value) || 0;
-            const sd1 = parseFloat(document.getElementById('tt-sd1').value) || 0;
-            const n2 = parseFloat(document.getElementById('tt-n2').value) || 1;
-            const m2 = parseFloat(document.getElementById('tt-m2').value) || 0;
-            const sd2 = parseFloat(document.getElementById('tt-sd2').value) || 0;
-
-            const pooledVariance = ((n1 - 1) * Math.pow(sd1, 2) + (n2 - 1) * Math.pow(sd2, 2)) / (n1 + n2 - 2 || 1);
-            const calculatedTScoreValue = (m1 - m2) / Math.sqrt(pooledVariance / n1 + pooledVariance / n2 || 1);
-            document.getElementById('out-tt-val').innerText = Math.abs(calculatedTScoreValue).toFixed(4);
-        }
-
-        // 13. Analysis of Variance ANOVA Engine Processor Array
-        function runANOVA() {
-            const m1 = parseFloat(document.getElementById('an-m1').value) || 0;
-            const m2 = parseFloat(document.getElementById('an-m2').value) || 0;
-            const m3 = parseFloat(document.getElementById('an-m3').value) || 0;
-            const grandMeanAverageValue = (m1 + m2 + m3) / 3;
-            const generatedFValueFactor = Math.abs((Math.pow(m1 - grandMeanAverageValue, 2) + Math.pow(m3 - grandMeanAverageValue, 2)) * 3.42);
-            document.getElementById('out-an-f').innerText = generatedFValueFactor.toFixed(4);
-        }
-
-        // 14. Sample Size Proportion Survey Calculator
-        function runSSProp() {
-            const p = parseFloat(document.getElementById('ssp-p').value) || 0.5;
-            const d = parseFloat(document.getElementById('ssp-d').value) || 0.05;
-            const computedSampleSize = (Math.pow(1.96, 2) * p * (1 - p)) / Math.pow(d, 2);
-            document.getElementById('out-ssp-val').innerText = Math.ceil(computedSampleSize);
-        }
-
-        // 15. Sample Size Unmatched Case Control Design Solver Module
-        function runSSUnmatched() {
-            const ratio = parseFloat(document.getElementById('ssu-ratio').value) || 1;
-            const p2 = parseFloat(document.getElementById('ssu-p2').value) || 0.3;
-            const oddsRatio = parseFloat(document.getElementById('ssu-or').value) || 2;
-            
-            const p1 = (p2 * oddsRatio) / (1 - p2 + p2 * oddsRatio);
-            const pMean = (p1 + p2) / 2;
-            const baseCalculationUnits = Math.pow(1.96 * Math.sqrt(2 * pMean * (1 - pMean)) + 0.84 * Math.sqrt(p1 * (1 - p1) + p2 * (1 - p2)), 2) / Math.pow(p1 - p2, 2);
-            
-            document.getElementById('out-ssu-cases').innerText = Math.ceil(baseCalculationUnits);
-            document.getElementById('out-ssu-controls').innerText = Math.ceil(baseCalculationUnits * ratio);
-        }
-
-        // 16. Sample Size Cohort RCT Frame Calculator Engine Mapping
-        function runSSCohort() {
-            const p2 = parseFloat(document.getElementById('ssc-p2').value) || 0.15;
-            const p1 = parseFloat(document.getElementById('ssc-p1').value) || 0.05;
-            const pMean = (p1 + p2) / 2;
-            const requiredCohortCountUnits = Math.pow(1.96 * Math.sqrt(2 * pMean * (1 - pMean)) + 0.84 * Math.sqrt(p1 * (1 - p1) + p2 * (1 - p2)), 2) / Math.pow(p1 - p2, 2);
-            
-            document.getElementById('out-ssc-g1').innerText = Math.ceil(requiredCohortCountUnits);
-            document.getElementById('out-ssc-g2').innerText = Math.ceil(requiredCohortCountUnits);
-        }
-
-        // 17. Sample Size Mean Difference Component Controller
-        function runSSMeanDiff() {
-            const sd = parseFloat(document.getElementById('ssd-sd').value) || 1;
-            const diff = parseFloat(document.getElementById('ssd-diff').value) || 1;
-            const requiredMeanDifferenceCount = 2 * Math.pow((1.96 + 0.84) * sd, 2) / Math.pow(diff, 2);
-            document.getElementById('out-ssd-val').innerText = Math.ceil(requiredMeanDifferenceCount);
-        }
-
-        // 18. Power Map Assessment Unmatched Case Control Processing Unit
-        function runPowerUnmatched() {
-            const n1 = parseFloat(document.getElementById('pu-n1').value) || 1;
-            const p2 = parseFloat(document.getElementById('pu-p2').value) || 0.2;
-            const or = parseFloat(document.getElementById('pu-or').value) || 1;
-            const targetPowerApproximationFactor = Math.min(99.9, Math.max(10, (n1 / (n1 + 180)) * 100 + (or * 2.5)));
-            document.getElementById('out-pu-power').innerText = targetPowerApproximationFactor.toFixed(2) + "%";
-        }
-
-        // 19. Power Assessment Cohort Stream Processing Engine Array Map
-        function runPowerCohort() {
-            const n1 = parseFloat(document.getElementById('pc-n1').value) || 1;
-            const rr = parseFloat(document.getElementById('pc-rr').value) || 1;
-            const powerCoefficientScore = Math.min(99.95, Math.max(5, (n1 / (n1 + 120)) * 98 + (rr * 0.8)));
-            document.getElementById('out-pc-power').innerText = powerCoefficientScore.toFixed(2) + "%";
-        }
-
-        // 20. Power Validation Clinical Trial Setup Model Processor
-        function runPowerClinical() {
-            const n1 = parseFloat(document.getElementById('pt-n1').value) || 1;
-            const p1 = parseFloat(document.getElementById('pt-p1').value) || 0.5;
-            const p2 = parseFloat(document.getElementById('pt-p2').value) || 0.4;
-            const dynamicTrialPowerScore = Math.min(99.9, Math.max(8, Math.abs(p1 - p2) * 400 * (n1 / (n1 + 50))));
-            document.getElementById('out-pt-power').innerText = dynamicTrialPowerScore.toFixed(2) + "%";
-        }
-
-        // 21. Power Valuation Cross Sectional Evaluation Setup Mapping Module
-        function runPowerXSectional() {
-            const n1 = parseFloat(document.getElementById('px-n1').value) || 1;
-            const p1 = parseFloat(document.getElementById('px-p1').value) || 0;
-            const p2 = parseFloat(document.getElementById('px-p2').value) || 0;
-            const crossSectionalPowerIndexValuation = Math.min(99.9, Math.max(12, Math.abs(p1 - p2) * 500 * (n1 / (n1 + 100))));
-            document.getElementById('out-px-power').innerText = crossSectionalPowerIndexValuation.toFixed(2) + "%";
-        }
-
-        // 22. Power Verification Mean Difference Engine Array Configuration Solver
-        function runPowerMeanDiff() {
-            const n = parseFloat(document.getElementById('pmd-n').value) || 1;
-            const sd = parseFloat(document.getElementById('pmd-sd').value) || 1;
-            const d = parseFloat(document.getElementById('pmd-d').value) || 0;
-            const computedMeanDifferencePowerValue = Math.min(99.99, Math.max(2, (d * Math.sqrt(n)) / (sd * 0.42) * 12));
-            document.getElementById('out-pmd-power').innerText = computedMeanDifferencePowerValue.toFixed(2) + "%";
+            // Update Summary Text
+            document.getElementById('output-summary').innerHTML = `
+                N = ${N.toLocaleString()} <br>
+                Freq = ${p_percent}% &plusmn; ${d_percent}% <br>
+                DEFF = ${deff}
+            `;
         }
     </script>
 </body>
