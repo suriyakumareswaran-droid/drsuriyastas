@@ -19,6 +19,7 @@
             --text-muted: #64748b;
             --accent-dark: #0f172a;
             --table-header: rgba(71, 85, 105, 0.08);
+            --input-border: rgba(0,0,0,0.15);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background: var(--bg-gradient); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; }
@@ -42,18 +43,22 @@
         h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: 8px; color: var(--accent-dark); border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 12px; }
         p.subtitle { font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 25px; }
         .grid-split { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        .panel { background: rgba(255, 255, 255, 0.5); border: 1px solid var(--glass-border); border-radius: 12px; padding: 20px; box-shadow: inset 0 2px 4px rgba(255,255,255,0.6); margin-bottom: 20px;}
-        .panel h3 { font-size: 1.05rem; margin-bottom: 18px; color: var(--accent-dark); font-weight: 600; }
-        .fg { margin-bottom: 12px; } .fg label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: var(--accent-dark); }
-        input[type="number"] { width: 100%; padding: 8px 12px; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; font-family: inherit; font-size: 0.95rem; background: rgba(255, 255, 255, 0.9); }
+        .panel { background: rgba(255, 255, 255, 0.5); border: 1px solid var(--glass-border); border-radius: 12px; padding: 25px; box-shadow: inset 0 2px 4px rgba(255,255,255,0.6); margin-bottom: 20px;}
+        .panel h3 { font-size: 1.05rem; margin-bottom: 18px; color: var(--accent-dark); font-weight: 600; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 10px; }
+        .fg { margin-bottom: 14px; } 
+        .fg label { display: block; font-size: 0.88rem; font-weight: 600; margin-bottom: 5px; color: var(--accent-dark); }
+        .fg span.hint { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 5px; }
+        input[type="number"], select { width: 100%; padding: 10px 12px; border: 1px solid var(--input-border); border-radius: 8px; font-family: inherit; font-size: 0.95rem; background: rgba(255, 255, 255, 0.9); }
         input[type="number"]:focus { outline: none; border-color: var(--accent-dark); box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.1); }
         .matrix-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-        .matrix-table input { width: 70px; text-align: center; }
-        .btn-calc { background: var(--accent-dark); color: white; border: none; padding: 12px 20px; font-size: 0.95rem; font-weight: 600; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 10px; transition: background 0.2s; }
-        .btn-calc:hover { background: #1e293b; }
-        table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.8); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.03); margin-top: 10px; font-size: 0.9rem; }
-        th, td { padding: 12px 14px; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.04); }
-        th { background-color: var(--table-header); font-weight: 600; color: var(--accent-dark); }
+        .matrix-table input { width: 80px; text-align: center; }
+        .matrix-table th { font-size: 0.85rem; padding-bottom: 8px; }
+        .btn-calc { background: var(--accent-dark); color: white; border: none; padding: 14px 20px; font-size: 0.95rem; font-weight: 600; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 15px; transition: background 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-calc:hover { background: #1e293b; transform: translateY(-1px); }
+        table.results { width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.8); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-top: 10px; font-size: 0.9rem; }
+        table.results th, table.results td { padding: 12px 14px; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.04); }
+        table.results th { background-color: var(--table-header); font-weight: 600; color: var(--accent-dark); }
+        table.results tr:last-child td { border-bottom: none; }
         footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.85rem; background: var(--glass-bg); border-top: 1px solid var(--glass-border); margin-top: auto; }
         @media (max-width: 950px) { .app-container { flex-direction: column; padding: 15px; } .mobile-menu-btn { display: block; } aside { width: 100%; display: none; height: auto; position: static; } aside.show-mobile { display: block; } .grid-split { grid-template-columns: 1fr; } header { flex-direction: column; gap: 10px; text-align: center; } .header-credit { text-align: center; } }
     </style>
@@ -91,342 +96,420 @@
             <button class="menu-item" onclick="nav('m-ssucc', this)">Unmatched CC</button>
             <button class="menu-item" onclick="nav('m-sscohort', this)">Cohort/RCT</button>
             <button class="menu-item" onclick="nav('m-ssmean', this)">Mean Difference</button>
-            <div class="menu-title">Power</div>
-            <button class="menu-item" onclick="nav('m-powucc', this)">Unmatched CC</button>
-            <button class="menu-item" onclick="nav('m-powcohort', this)">Cohort</button>
-            <button class="menu-item" onclick="nav('m-powrct', this)">Clinical Trial</button>
-            <button class="menu-item" onclick="nav('m-powxsec', this)">X-Sectional</button>
-            <button class="menu-item" onclick="nav('m-powmean', this)">Mean Difference</button>
         </aside>
 
         <main>
             <section id="m-home" class="content-section active-section">
                 <h2>Statistic Engine Workspace</h2>
-                <p class="subtitle">Complete functional suite for epidemiological metrics.</p>
-                <div class="panel"><p>Select any module from the sidebar. All 22 statistical calculators are fully active with data entry forms and real-time processing formulas.</p></div>
+                <p class="subtitle">Complete detailed suite for 17 epidemiological metrics.</p>
+                <div class="panel">
+                    <p>Select any module from the sidebar. All 17 calculators feature exact formulas (including Byar's approximations, Wilson Scores, and Kelsey/Fleiss sample size derivations) matching the core OpenEpi methodology.</p>
+                </div>
             </section>
 
             <section id="m-smr" class="content-section">
                 <h2>Standardized Mortality Ratio (SMR)</h2>
+                <p class="subtitle">Calculate SMR with Byar's exact Mid-P approximations for confidence limits.</p>
                 <div class="grid-split">
                     <div class="panel">
-                        <div class="fg"><label>Observed (O)</label><input type="number" id="smr-o" value="20"></div>
-                        <div class="fg"><label>Expected (E)</label><input type="number" id="smr-e" value="15.5"></div>
-                        <button class="btn-calc" onclick="c_smr()">Calculate</button>
+                        <h3>Input Parameters</h3>
+                        <div class="fg"><label>Observed Events (O)</label><input type="number" id="smr-o" value="20"></div>
+                        <div class="fg"><label>Expected Events (E)</label><input type="number" id="smr-e" value="15.5"></div>
+                        <button class="btn-calc" onclick="c_smr()">Calculate SMR</button>
                     </div>
                     <div class="panel">
-                        <table><tr><th>Metric</th><th>Value</th></tr><tr><td>SMR Ratio</td><td id="out-smr">--</td></tr></table>
+                        <h3>Results (95% Confidence)</h3>
+                        <table class="results">
+                            <tr><th>Metric</th><th>Value</th></tr>
+                            <tr><td>SMR Ratio (O/E)</td><td id="out-smr-val">--</td></tr>
+                            <tr><td>Lower Limit (Byar's)</td><td id="out-smr-l">--</td></tr>
+                            <tr><td>Upper Limit (Byar's)</td><td id="out-smr-u">--</td></tr>
+                        </table>
                     </div>
                 </div>
             </section>
 
             <section id="m-propci" class="content-section">
-                <h2>Confidence Limits for Proportion</h2>
+                <h2>Proportion Confidence Limits</h2>
+                <p class="subtitle">Calculates Wald (Asymptotic) and Wilson Score interval limits.</p>
                 <div class="grid-split">
                     <div class="panel">
-                        <div class="fg"><label>Numerator (x)</label><input type="number" id="pci-x" value="45"></div>
-                        <div class="fg"><label>Denominator (n)</label><input type="number" id="pci-n" value="100"></div>
-                        <button class="btn-calc" onclick="c_propci()">Calculate</button>
+                        <h3>Input Parameters</h3>
+                        <div class="fg"><label>Numerator (x) [Events]</label><input type="number" id="pci-x" value="15"></div>
+                        <div class="fg"><label>Denominator (n) [Total]</label><input type="number" id="pci-n" value="100"></div>
+                        <button class="btn-calc" onclick="c_propci()">Calculate Bounds</button>
                     </div>
                     <div class="panel">
-                        <table><tr><th>Proportion</th><th>95% CI Lower</th><th>95% CI Upper</th></tr><tr><td id="out-pci-p">--</td><td id="out-pci-l">--</td><td id="out-pci-u">--</td></tr></table>
+                        <h3>Results (95% CI)</h3>
+                        <table class="results">
+                            <tr><th>Method</th><th>Proportion</th><th>Lower</th><th>Upper</th></tr>
+                            <tr><td>Wald Limit</td><td id="out-pci-pw">--</td><td id="out-pci-wl">--</td><td id="out-pci-wu">--</td></tr>
+                            <tr><td>Wilson Score</td><td id="out-pci-ps">--</td><td id="out-pci-sl">--</td><td id="out-pci-su">--</td></tr>
+                        </table>
                     </div>
                 </div>
             </section>
 
             <section id="m-2x2" class="content-section">
-                <h2>Two by Two Table</h2>
+                <h2>Two by Two Table Analysis</h2>
+                <p class="subtitle">Compute Odds Ratios, Risk Ratios, and Chi-Square statistics with Yates correction.</p>
                 <div class="grid-split">
                     <div class="panel">
-                        <table class="matrix-table"><tr><th></th><th>Dis(+)</th><th>Dis(-)</th></tr>
-                        <tr><th>Exp(+)</th><td><input type="number" id="t2-a" value="30"></td><td><input type="number" id="t2-b" value="10"></td></tr>
-                        <tr><th>Exp(-)</th><td><input type="number" id="t2-c" value="15"></td><td><input type="number" id="t2-d" value="45"></td></tr></table>
-                        <button class="btn-calc" onclick="c_2x2()">Calculate</button>
+                        <h3>2x2 Data Matrix</h3>
+                        <table class="matrix-table">
+                            <tr><th></th><th>Disease (+)</th><th>Disease (-)</th></tr>
+                            <tr><th>Exposed (+)</th><td><input type="number" id="t2-a" value="30"></td><td><input type="number" id="t2-b" value="10"></td></tr>
+                            <tr><th>Unexposed (-)</th><td><input type="number" id="t2-c" value="15"></td><td><input type="number" id="t2-d" value="45"></td></tr>
+                        </table>
+                        <button class="btn-calc" onclick="c_2x2()">Evaluate Matrix</button>
                     </div>
                     <div class="panel">
-                        <table><tr><th>Odds Ratio</th><th>Risk Ratio</th><th>Chi-Sq</th></tr><tr><td id="out-2x2-or">--</td><td id="out-2x2-rr">--</td><td id="out-2x2-chi">--</td></tr></table>
+                        <h3>Association Measures</h3>
+                        <table class="results">
+                            <tr><th>Measure</th><th>Value</th></tr>
+                            <tr><td>Odds Ratio (Cross-Product)</td><td id="out-2x2-or">--</td></tr>
+                            <tr><td>Risk Ratio (Relative Risk)</td><td id="out-2x2-rr">--</td></tr>
+                            <tr><td>Uncorrected Chi-Square</td><td id="out-2x2-chi">--</td></tr>
+                            <tr><td>Yates Corrected Chi-Square</td><td id="out-2x2-yates">--</td></tr>
+                        </table>
                     </div>
                 </div>
             </section>
 
             <section id="m-dose" class="content-section">
-                <h2>Dose-Response Trend</h2>
+                <h2>Chi-Square for Dose-Response Trend</h2>
+                <p class="subtitle">Mantel-Haenszel extension test for linear trend across exposure levels.</p>
                 <div class="grid-split">
                     <div class="panel">
-                        <table class="matrix-table"><tr><th>Level</th><th>Cases</th><th>Controls</th></tr>
-                        <tr><th>1</th><td><input type="number" id="dr-a1" value="10"></td><td><input type="number" id="dr-b1" value="40"></td></tr>
-                        <tr><th>2</th><td><input type="number" id="dr-a2" value="25"></td><td><input type="number" id="dr-b2" value="30"></td></tr>
-                        <tr><th>3</th><td><input type="number" id="dr-a3" value="50"></td><td><input type="number" id="dr-b3" value="15"></td></tr></table>
-                        <button class="btn-calc" onclick="c_dose()">Calculate</button>
+                        <h3>Exposure Levels</h3>
+                        <table class="matrix-table">
+                            <tr><th>Exposure Score</th><th>Cases</th><th>Controls</th></tr>
+                            <tr><td><input type="number" id="dr-s1" value="1"></td><td><input type="number" id="dr-a1" value="10"></td><td><input type="number" id="dr-b1" value="40"></td></tr>
+                            <tr><td><input type="number" id="dr-s2" value="2"></td><td><input type="number" id="dr-a2" value="25"></td><td><input type="number" id="dr-b2" value="30"></td></tr>
+                            <tr><td><input type="number" id="dr-s3" value="3"></td><td><input type="number" id="dr-a3" value="50"></td><td><input type="number" id="dr-b3" value="15"></td></tr>
+                        </table>
+                        <button class="btn-calc" onclick="c_dose()">Calculate Linear Trend</button>
                     </div>
                     <div class="panel">
-                        <table><tr><th>Linear Trend Factor</th></tr><tr><td id="out-dr">--</td></tr></table>
+                        <h3>Trend Statistics</h3>
+                        <table class="results">
+                            <tr><th>Statistic</th><th>Value</th></tr>
+                            <tr><td>Extended Mantel-Haenszel Chi-Sq</td><td id="out-dr-chi">--</td></tr>
+                            <tr><td>Degrees of Freedom</td><td>1</td></tr>
+                        </table>
                     </div>
                 </div>
             </section>
 
             <section id="m-rxc" class="content-section">
                 <h2>R by C Contingency Table</h2>
+                <p class="subtitle">Compute Pearson Chi-Square for categorical variables larger than 2x2.</p>
                 <div class="grid-split">
                     <div class="panel">
-                        <table class="matrix-table"><tr><th>Row\Col</th><th>C1</th><th>C2</th><th>C3</th></tr>
-                        <tr><th>R1</th><td><input type="number" id="rc11" value="10"></td><td><input type="number" id="rc12" value="15"></td><td><input type="number" id="rc13" value="5"></td></tr>
-                        <tr><th>R2</th><td><input type="number" id="rc21" value="20"></td><td><input type="number" id="rc22" value="10"></td><td><input type="number" id="rc23" value="15"></td></tr></table>
-                        <button class="btn-calc" onclick="c_rxc()">Calculate Chi-Sq</button>
+                        <h3>3x3 Observation Matrix</h3>
+                        <table class="matrix-table">
+                            <tr><th>Row\Col</th><th>Col 1</th><th>Col 2</th><th>Col 3</th></tr>
+                            <tr><th>Row 1</th><td><input type="number" id="rc11" value="12"></td><td><input type="number" id="rc12" value="15"></td><td><input type="number" id="rc13" value="8"></td></tr>
+                            <tr><th>Row 2</th><td><input type="number" id="rc21" value="20"></td><td><input type="number" id="rc22" value="10"></td><td><input type="number" id="rc23" value="15"></td></tr>
+                            <tr><th>Row 3</th><td><input type="number" id="rc31" value="5"></td><td><input type="number" id="rc32" value="25"></td><td><input type="number" id="rc33" value="10"></td></tr>
+                        </table>
+                        <button class="btn-calc" onclick="c_rxc()">Calculate Matrix</button>
                     </div>
                     <div class="panel">
-                        <table><tr><th>Pearson Chi-Square</th></tr><tr><td id="out-rxc">--</td></tr></table>
+                        <h3>Chi-Square Results</h3>
+                        <table class="results">
+                            <tr><th>Metric</th><th>Value</th></tr>
+                            <tr><td>Pearson Chi-Square (χ²)</td><td id="out-rxc-chi">--</td></tr>
+                            <tr><td>Degrees of Freedom (df)</td><td id="out-rxc-df">--</td></tr>
+                        </table>
                     </div>
                 </div>
             </section>
 
             <section id="m-mcc" class="content-section">
-                <h2>Matched Case Control</h2>
+                <h2>Matched Case Control Analysis</h2>
+                <p class="subtitle">Evaluate paired categorical data using McNemar's Test.</p>
                 <div class="grid-split">
                     <div class="panel">
-                        <table class="matrix-table"><tr><th>Controls \ Cases</th><th>Exp(+)</th><th>Exp(-)</th></tr>
-                        <tr><th>Exp(+)</th><td><input type="number" id="mc-a" value="10"></td><td><input type="number" id="mc-b" value="25"></td></tr>
-                        <tr><th>Exp(-)</th><td><input type="number" id="mc-c" value="5"></td><td><input type="number" id="mc-d" value="40"></td></tr></table>
+                        <h3>Discordant Pair Matrix</h3>
+                        <table class="matrix-table">
+                            <tr><th>Controls \ Cases</th><th>Exposed (+)</th><th>Unexposed (-)</th></tr>
+                            <tr><th>Exposed (+)</th><td><input type="number" id="mc-a" value="10"></td><td><input type="number" id="mc-b" value="25"></td></tr>
+                            <tr><th>Unexposed (-)</th><td><input type="number" id="mc-c" value="8"></td><td><input type="number" id="mc-d" value="40"></td></tr>
+                        </table>
                         <button class="btn-calc" onclick="c_mcc()">Calculate McNemar</button>
                     </div>
                     <div class="panel">
-                        <table><tr><th>McNemar Chi-Square</th></tr><tr><td id="out-mcc">--</td></tr></table>
+                        <h3>Paired Statistics</h3>
+                        <table class="results">
+                            <tr><th>Metric</th><th>Value</th></tr>
+                            <tr><td>Matched Odds Ratio (c/b)</td><td id="out-mcc-or">--</td></tr>
+                            <tr><td>McNemar Chi-Square</td><td id="out-mcc-chi">--</td></tr>
+                        </table>
                     </div>
                 </div>
             </section>
 
             <section id="m-screen" class="content-section">
-                <h2>Screening Metrics</h2>
+                <h2>Screening / Diagnostic Tests</h2>
+                <p class="subtitle">Calculates true/false validation metrics for clinical diagnostic tools.</p>
                 <div class="grid-split">
                     <div class="panel">
-                        <table class="matrix-table"><tr><th>Test \ True</th><th>Dis(+)</th><th>Dis(-)</th></tr>
-                        <tr><th>Test(+)</th><td><input type="number" id="sc-a" value="80"></td><td><input type="number" id="sc-b" value="10"></td></tr>
-                        <tr><th>Test(-)</th><td><input type="number" id="sc-c" value="20"></td><td><input type="number" id="sc-d" value="90"></td></tr></table>
-                        <button class="btn-calc" onclick="c_screen()">Calculate</button>
+                        <h3>Test vs Gold Standard</h3>
+                        <table class="matrix-table">
+                            <tr><th>Test \ True Dis</th><th>True (+)</th><th>True (-)</th></tr>
+                            <tr><th>Test (+)</th><td><input type="number" id="sc-a" value="85"></td><td><input type="number" id="sc-b" value="15"></td></tr>
+                            <tr><th>Test (-)</th><td><input type="number" id="sc-c" value="10"></td><td><input type="number" id="sc-d" value="90"></td></tr>
+                        </table>
+                        <button class="btn-calc" onclick="c_screen()">Calculate Efficiency</button>
                     </div>
                     <div class="panel">
-                        <table><tr><th>Sens</th><th>Spec</th><th>PPV</th><th>NPV</th></tr><tr><td id="out-sc-sens">--</td><td id="out-sc-spec">--</td><td id="out-sc-ppv">--</td><td id="out-sc-npv">--</td></tr></table>
+                        <h3>Diagnostic Validity</h3>
+                        <table class="results">
+                            <tr><th>Metric Component</th><th>Percentage (%)</th></tr>
+                            <tr><td>Sensitivity (Recall)</td><td id="out-sc-sens">--</td></tr>
+                            <tr><td>Specificity</td><td id="out-sc-spec">--</td></tr>
+                            <tr><td>Positive Pred Value (PPV)</td><td id="out-sc-ppv">--</td></tr>
+                            <tr><td>Negative Pred Value (NPV)</td><td id="out-sc-npv">--</td></tr>
+                            <tr><td>Overall Accuracy</td><td id="out-sc-acc">--</td></tr>
+                        </table>
                     </div>
                 </div>
             </section>
 
             <section id="m-1rate" class="content-section">
-                <h2>1 Rate Assessment</h2>
+                <h2>1 Person-Time Rate Assessment</h2>
+                <p class="subtitle">Compute incidence rates per person-time unit with Byar's exact bounds.</p>
                 <div class="grid-split">
                     <div class="panel">
-                        <div class="fg"><label>Cases (a)</label><input type="number" id="r1-a" value="15"></div>
-                        <div class="fg"><label>Person-Time</label><input type="number" id="r1-pt" value="1000"></div>
-                        <button class="btn-calc" onclick="c_1rate()">Calculate</button>
+                        <h3>Cohort Details</h3>
+                        <div class="fg"><label>Number of Cases (a)</label><input type="number" id="r1-a" value="18"></div>
+                        <div class="fg"><label>Total Person-Time (PT)</label><input type="number" id="r1-pt" value="1250"></div>
+                        <button class="btn-calc" onclick="c_1rate()">Calculate Rate</button>
                     </div>
                     <div class="panel">
-                        <table><tr><th>Incidence Rate</th></tr><tr><td id="out-1rate">--</td></tr></table>
+                        <h3>Incidence Bounds (95% CI)</h3>
+                        <table class="results">
+                            <tr><th>Measure</th><th>Rate Value</th></tr>
+                            <tr><td>Crude Incidence Rate</td><td id="out-1r-rate">--</td></tr>
+                            <tr><td>Lower Limit (Byar's)</td><td id="out-1r-low">--</td></tr>
+                            <tr><td>Upper Limit (Byar's)</td><td id="out-1r-up">--</td></tr>
+                        </table>
                     </div>
                 </div>
             </section>
 
             <section id="m-2rates" class="content-section">
-                <h2>Compare 2 Rates</h2>
+                <h2>Compare 2 Person-Time Rates</h2>
+                <p class="subtitle">Analyze the Incidence Rate Ratio and Difference between two cohorts.</p>
                 <div class="grid-split">
                     <div class="panel">
-                        <div class="fg"><label>Grp1 Cases / PT</label><div style="display:flex;gap:10px;"><input type="number" id="r2-a1" value="20"><input type="number" id="r2-pt1" value="1000"></div></div>
-                        <div class="fg"><label>Grp2 Cases / PT</label><div style="display:flex;gap:10px;"><input type="number" id="r2-a2" value="10"><input type="number" id="r2-pt2" value="1000"></div></div>
-                        <button class="btn-calc" onclick="c_2rates()">Calculate</button>
+                        <h3>Exposure Cohorts</h3>
+                        <div class="fg"><label>Exposed (Cases / PT)</label><div style="display:flex;gap:10px;"><input type="number" id="r2-a1" value="25" placeholder="Cases"><input type="number" id="r2-pt1" value="800" placeholder="PT"></div></div>
+                        <div class="fg"><label>Unexposed (Cases / PT)</label><div style="display:flex;gap:10px;"><input type="number" id="r2-a2" value="14" placeholder="Cases"><input type="number" id="r2-pt2" value="950" placeholder="PT"></div></div>
+                        <button class="btn-calc" onclick="c_2rates()">Compare Rates</button>
                     </div>
                     <div class="panel">
-                        <table><tr><th>Rate Ratio (IRR)</th><th>Rate Diff (IRD)</th></tr><tr><td id="out-2rate-rr">--</td><td id="out-2rate-rd">--</td></tr></table>
+                        <h3>Comparative Metrics</h3>
+                        <table class="results">
+                            <tr><th>Statistic</th><th>Value</th></tr>
+                            <tr><td>Rate Ratio (IRR)</td><td id="out-2r-rr">--</td></tr>
+                            <tr><td>Rate Difference (IRD)</td><td id="out-2r-rd">--</td></tr>
+                        </table>
                     </div>
                 </div>
             </section>
 
             <section id="m-meanci" class="content-section">
-                <h2>Mean Confidence Limits</h2>
+                <h2>Confidence Limits for a Mean</h2>
+                <p class="subtitle">Computes normal interval bounds using t-distribution approximation.</p>
                 <div class="grid-split">
                     <div class="panel">
-                        <div class="fg"><label>Sample Mean</label><input type="number" id="mci-m" value="120"></div>
-                        <div class="fg"><label>Standard Dev (SD)</label><input type="number" id="mci-sd" value="15"></div>
-                        <div class="fg"><label>Sample Size (n)</label><input type="number" id="mci-n" value="50"></div>
-                        <button class="btn-calc" onclick="c_meanci()">Calculate</button>
+                        <h3>Sample Statistics</h3>
+                        <div class="fg"><label>Sample Size (n)</label><input type="number" id="mci-n" value="64"></div>
+                        <div class="fg"><label>Sample Mean</label><input type="number" id="mci-m" value="114.5"></div>
+                        <div class="fg"><label>Standard Deviation (SD)</label><input type="number" id="mci-sd" value="14.2"></div>
+                        <button class="btn-calc" onclick="c_meanci()">Calculate Mean Limits</button>
                     </div>
                     <div class="panel">
-                        <table><tr><th>95% Lower Limit</th><th>95% Upper Limit</th></tr><tr><td id="out-mci-l">--</td><td id="out-mci-u">--</td></tr></table>
+                        <h3>95% Confidence Bounds</h3>
+                        <table class="results">
+                            <tr><th>Bound Type</th><th>Value</th></tr>
+                            <tr><td>Lower Limit Bound</td><td id="out-mci-l">--</td></tr>
+                            <tr><td>Upper Limit Bound</td><td id="out-mci-u">--</td></tr>
+                        </table>
                     </div>
                 </div>
             </section>
 
             <section id="m-median" class="content-section">
-                <h2>Median / Percentile CI</h2>
+                <h2>Median / Percentile Confidence Bounds</h2>
+                <p class="subtitle">Determine the rank order index bounds for continuous non-parametric variables.</p>
                 <div class="grid-split">
                     <div class="panel">
-                        <div class="fg"><label>Sample Size (n)</label><input type="number" id="med-n" value="100"></div>
-                        <div class="fg"><label>Percentile (e.g. 0.5 for Median)</label><input type="number" id="med-p" value="0.5" step="0.1"></div>
-                        <button class="btn-calc" onclick="c_median()">Calc Rank Limits</button>
+                        <h3>Array Details</h3>
+                        <div class="fg"><label>Total Sample Size (n)</label><input type="number" id="med-n" value="120"></div>
+                        <div class="fg"><label>Target Percentile (p)</label><span class="hint">Use 0.50 for Median, 0.25 for 25th %ile</span><input type="number" id="med-p" value="0.5" step="0.05"></div>
+                        <button class="btn-calc" onclick="c_median()">Locate Rank Bounds</button>
                     </div>
                     <div class="panel">
-                        <table><tr><th>Lower Rank Pos</th><th>Upper Rank Pos</th></tr><tr><td id="out-med-l">--</td><td id="out-med-u">--</td></tr></table>
+                        <h3>Rank Order Indices (95% CI)</h3>
+                        <table class="results">
+                            <tr><th>Rank Position</th><th>Index Number</th></tr>
+                            <tr><td>Lower Sorting Index</td><td id="out-med-l">--</td></tr>
+                            <tr><td>Upper Sorting Index</td><td id="out-med-u">--</td></tr>
+                        </table>
                     </div>
                 </div>
             </section>
 
             <section id="m-ttest" class="content-section">
-                <h2>Independent t-test</h2>
+                <h2>Independent Two-Sample t-Test</h2>
+                <p class="subtitle">Compute the t-statistic for difference in means utilizing pooled variance.</p>
                 <div class="grid-split">
                     <div class="panel">
-                        <table class="matrix-table"><tr><th>Group</th><th>n</th><th>Mean</th><th>SD</th></tr>
-                        <tr><th>1</th><td><input type="number" id="tt-n1" value="30"></td><td><input type="number" id="tt-m1" value="100"></td><td><input type="number" id="tt-s1" value="10"></td></tr>
-                        <tr><th>2</th><td><input type="number" id="tt-n2" value="30"></td><td><input type="number" id="tt-m2" value="90"></td><td><input type="number" id="tt-s2" value="12"></td></tr></table>
+                        <h3>Group Parameters</h3>
+                        <table class="matrix-table">
+                            <tr><th>Group</th><th>Sample (n)</th><th>Mean</th><th>SD</th></tr>
+                            <tr><th>1</th><td><input type="number" id="tt-n1" value="30"></td><td><input type="number" id="tt-m1" value="84.2"></td><td><input type="number" id="tt-s1" value="9.1"></td></tr>
+                            <tr><th>2</th><td><input type="number" id="tt-n2" value="35"></td><td><input type="number" id="tt-m2" value="78.5"></td><td><input type="number" id="tt-s2" value="10.4"></td></tr>
+                        </table>
                         <button class="btn-calc" onclick="c_ttest()">Calculate t-score</button>
                     </div>
                     <div class="panel">
-                        <table><tr><th>Absolute t-Statistic</th></tr><tr><td id="out-ttest">--</td></tr></table>
+                        <h3>Test Statistics</h3>
+                        <table class="results">
+                            <tr><th>Metric</th><th>Value</th></tr>
+                            <tr><td>Mean Difference</td><td id="out-tt-diff">--</td></tr>
+                            <tr><td>Absolute t-Statistic</td><td id="out-tt-val">--</td></tr>
+                            <tr><td>Degrees of Freedom</td><td id="out-tt-df">--</td></tr>
+                        </table>
                     </div>
                 </div>
             </section>
 
             <section id="m-anova" class="content-section">
-                <h2>One-Way ANOVA</h2>
+                <h2>One-Way Analysis of Variance (ANOVA)</h2>
+                <p class="subtitle">Compute F-Statistic ratio via Mean Squares Between and Within groups.</p>
                 <div class="grid-split">
                     <div class="panel">
-                        <table class="matrix-table"><tr><th>Group</th><th>n</th><th>Mean</th><th>SD</th></tr>
-                        <tr><th>1</th><td><input type="number" id="an-n1" value="10"></td><td><input type="number" id="an-m1" value="20"></td><td><input type="number" id="an-s1" value="3"></td></tr>
-                        <tr><th>2</th><td><input type="number" id="an-n2" value="10"></td><td><input type="number" id="an-m2" value="25"></td><td><input type="number" id="an-s2" value="4"></td></tr>
-                        <tr><th>3</th><td><input type="number" id="an-n3" value="10"></td><td><input type="number" id="an-m3" value="22"></td><td><input type="number" id="an-s3" value="3.5"></td></tr></table>
-                        <button class="btn-calc" onclick="c_anova()">Calculate F-Ratio</button>
+                        <h3>Group Data (3 Levels)</h3>
+                        <table class="matrix-table">
+                            <tr><th>Group</th><th>Sample (n)</th><th>Mean</th><th>SD</th></tr>
+                            <tr><th>1</th><td><input type="number" id="an-n1" value="15"></td><td><input type="number" id="an-m1" value="22.4"></td><td><input type="number" id="an-s1" value="3.4"></td></tr>
+                            <tr><th>2</th><td><input type="number" id="an-n2" value="15"></td><td><input type="number" id="an-m2" value="28.1"></td><td><input type="number" id="an-s2" value="4.1"></td></tr>
+                            <tr><th>3</th><td><input type="number" id="an-n3" value="15"></td><td><input type="number" id="an-m3" value="21.2"></td><td><input type="number" id="an-s3" value="3.9"></td></tr>
+                        </table>
+                        <button class="btn-calc" onclick="c_anova()">Compute Variance Table</button>
                     </div>
                     <div class="panel">
-                        <table><tr><th>F-Statistic</th></tr><tr><td id="out-anova">--</td></tr></table>
+                        <h3>F-Distribution Score</h3>
+                        <table class="results">
+                            <tr><th>Component</th><th>Value</th></tr>
+                            <tr><td>F-Statistic Ratio</td><td id="out-an-f">--</td></tr>
+                            <tr><td>Numerator df (Between)</td><td id="out-an-dfb">--</td></tr>
+                            <tr><td>Denominator df (Within)</td><td id="out-an-dfw">--</td></tr>
+                        </table>
                     </div>
                 </div>
             </section>
 
             <section id="m-ssprop" class="content-section">
-                <h2>Sample Size: Proportion</h2>
+                <h2>Sample Size: Single Proportion</h2>
+                <p class="subtitle">Determine required survey size with finite population corrections.</p>
                 <div class="grid-split">
                     <div class="panel">
-                        <div class="fg"><label>Pop Size (N)</label><input type="number" id="sp-n" value="1000000"></div>
-                        <div class="fg"><label>Anticipated % (p)</label><input type="number" id="sp-p" value="50"></div>
-                        <div class="fg"><label>Confidence +/- % (d)</label><input type="number" id="sp-d" value="5"></div>
-                        <button class="btn-calc" onclick="c_ssprop()">Calculate (95% CL)</button>
+                        <h3>Study Logistics</h3>
+                        <div class="fg"><label>Population size (N)</label><span class="hint">Leave as 1000000 if large</span><input type="number" id="sp-n" value="1000000"></div>
+                        <div class="fg"><label>Anticipated % frequency (p)</label><input type="number" id="sp-p" value="50"></div>
+                        <div class="fg"><label>Confidence limits +/- % (d)</label><input type="number" id="sp-d" value="5"></div>
+                        <div class="fg"><label>Design effect (DEFF)</label><input type="number" id="sp-deff" value="1.0" step="0.1"></div>
+                        <button class="btn-calc" onclick="c_ssprop()">Compute Sample Range</button>
                     </div>
                     <div class="panel">
-                        <table><tr><th>Required Sample (n)</th></tr><tr><td id="out-ssprop">--</td></tr></table>
+                        <h3>Required Responses (n)</h3>
+                        <table class="results">
+                            <tr><th>Confidence Level</th><th>Target Size (n)</th></tr>
+                            <tr><td>99% (Z=2.58)</td><td id="out-sp-99">--</td></tr>
+                            <tr><td style="font-weight:700;">95% (Z=1.96)</td><td id="out-sp-95" style="font-weight:700;">--</td></tr>
+                            <tr><td>90% (Z=1.64)</td><td id="out-sp-90">--</td></tr>
+                            <tr><td>80% (Z=1.28)</td><td id="out-sp-80">--</td></tr>
+                        </table>
                     </div>
                 </div>
             </section>
 
             <section id="m-ssucc" class="content-section">
-                <h2>Sample Size: Unmatched CC</h2>
+                <h2>Sample Size: Unmatched Case-Control</h2>
+                <p class="subtitle">Calculates Fleiss and Kelsey limits via Power and Alpha parameters.</p>
                 <div class="grid-split">
                     <div class="panel">
-                        <div class="fg"><label>Control:Case Ratio</label><input type="number" id="su-r" value="1"></div>
-                        <div class="fg"><label>% Exp in Controls (p2)</label><input type="number" id="su-p2" value="30"></div>
-                        <div class="fg"><label>Expected OR</label><input type="number" id="su-or" value="2"></div>
-                        <button class="btn-calc" onclick="c_ssucc()">Calculate</button>
+                        <h3>Trial Parameters</h3>
+                        <div class="fg"><label>Two-sided Confidence Level (%)</label><input type="number" id="su-conf" value="95"></div>
+                        <div class="fg"><label>Power (% chance of detecting)</label><input type="number" id="su-pow" value="80"></div>
+                        <div class="fg"><label>Ratio of Controls to Cases</label><input type="number" id="su-r" value="1"></div>
+                        <div class="fg"><label>% Exposed in Controls (p2)</label><input type="number" id="su-p2" value="30"></div>
+                        <div class="fg"><label>Anticipated Odds Ratio</label><input type="number" id="su-or" value="2.0" step="0.1"></div>
+                        <button class="btn-calc" onclick="c_ssucc()">Calculate Cohort Limits</button>
                     </div>
                     <div class="panel">
-                        <table><tr><th>Cases (n1)</th><th>Controls (n2)</th></tr><tr><td id="out-su-c1">--</td><td id="out-su-c2">--</td></tr></table>
+                        <h3>Sample Size (Kelsey Formula)</h3>
+                        <table class="results">
+                            <tr><th>Requirement</th><th>Size</th></tr>
+                            <tr><td>Required Cases (n1)</td><td id="out-su-cases">--</td></tr>
+                            <tr><td>Required Controls (n2)</td><td id="out-su-ctrls">--</td></tr>
+                            <tr><td style="font-weight:700;">Total Target Size</td><td id="out-su-total" style="font-weight:700;">--</td></tr>
+                        </table>
                     </div>
                 </div>
             </section>
 
             <section id="m-sscohort" class="content-section">
                 <h2>Sample Size: Cohort / RCT</h2>
+                <p class="subtitle">Define study sizes based on exposure attack rates and expected outcomes.</p>
                 <div class="grid-split">
                     <div class="panel">
-                        <div class="fg"><label>Unexposed Event % (p2)</label><input type="number" id="sc-p2" value="15"></div>
-                        <div class="fg"><label>Exposed Event % (p1)</label><input type="number" id="sc-p1" value="5"></div>
-                        <button class="btn-calc" onclick="c_sscohort()">Calculate N per group</button>
+                        <h3>Trial Parameters</h3>
+                        <div class="fg"><label>Two-sided Confidence Level (%)</label><input type="number" id="sc-conf" value="95"></div>
+                        <div class="fg"><label>Power (% chance of detecting)</label><input type="number" id="sc-pow" value="80"></div>
+                        <div class="fg"><label>Ratio (Unexposed : Exposed)</label><input type="number" id="sc-r" value="1"></div>
+                        <div class="fg"><label>% Outcome in Unexposed (p2)</label><input type="number" id="sc-p2" value="15"></div>
+                        <div class="fg"><label>% Outcome in Exposed (p1)</label><input type="number" id="sc-p1" value="5"></div>
+                        <button class="btn-calc" onclick="c_sscohort()">Calculate Cohort Limits</button>
                     </div>
                     <div class="panel">
-                        <table><tr><th>Sample Size per Arm</th></tr><tr><td id="out-sc-n">--</td></tr></table>
+                        <h3>Sample Size (Kelsey Formula)</h3>
+                        <table class="results">
+                            <tr><th>Requirement</th><th>Size</th></tr>
+                            <tr><td>Exposed Group (n1)</td><td id="out-sc-n1">--</td></tr>
+                            <tr><td>Unexposed Group (n2)</td><td id="out-sc-n2">--</td></tr>
+                            <tr><td style="font-weight:700;">Total Target Size</td><td id="out-sc-total" style="font-weight:700;">--</td></tr>
+                        </table>
                     </div>
                 </div>
             </section>
 
             <section id="m-ssmean" class="content-section">
-                <h2>Sample Size: Mean Difference</h2>
+                <h2>Sample Size: Continuous Mean Difference</h2>
+                <p class="subtitle">Estimate minimum subject allocation for continuous measure divergence.</p>
                 <div class="grid-split">
                     <div class="panel">
-                        <div class="fg"><label>Expected SD</label><input type="number" id="sm-sd" value="12"></div>
-                        <div class="fg"><label>Mean Difference (d)</label><input type="number" id="sm-d" value="5"></div>
-                        <button class="btn-calc" onclick="c_ssmean()">Calculate</button>
+                        <h3>Continuous Metrics</h3>
+                        <div class="fg"><label>Confidence Level (%)</label><input type="number" id="sm-conf" value="95"></div>
+                        <div class="fg"><label>Power (%)</label><input type="number" id="sm-pow" value="80"></div>
+                        <div class="fg"><label>Ratio (Group 2 : Group 1)</label><input type="number" id="sm-r" value="1"></div>
+                        <div class="fg"><label>Expected Std Deviation (SD)</label><input type="number" id="sm-sd" value="12"></div>
+                        <div class="fg"><label>Mean Difference to Detect (d)</label><input type="number" id="sm-d" value="5"></div>
+                        <button class="btn-calc" onclick="c_ssmean()">Calculate Sample Allocation</button>
                     </div>
                     <div class="panel">
-                        <table><tr><th>Sample Size per Arm</th></tr><tr><td id="out-sm-n">--</td></tr></table>
-                    </div>
-                </div>
-            </section>
-
-            <section id="m-powucc" class="content-section">
-                <h2>Power: Unmatched CC</h2>
-                <div class="grid-split">
-                    <div class="panel">
-                        <div class="fg"><label>Cases (n1) / Controls (n2)</label><div style="display:flex;gap:10px;"><input type="number" id="pu-n1" value="100"><input type="number" id="pu-n2" value="100"></div></div>
-                        <div class="fg"><label>Control Exp %</label><input type="number" id="pu-p2" value="25"></div>
-                        <div class="fg"><label>Observed OR</label><input type="number" id="pu-or" value="2.5"></div>
-                        <button class="btn-calc" onclick="c_powucc()">Estimate Power</button>
-                    </div>
-                    <div class="panel">
-                        <table><tr><th>Statistical Power</th></tr><tr><td id="out-pu">--</td></tr></table>
-                    </div>
-                </div>
-            </section>
-
-            <section id="m-powcohort" class="content-section">
-                <h2>Power: Cohort Study</h2>
-                <div class="grid-split">
-                    <div class="panel">
-                        <div class="fg"><label>Exp (n1) / Unexp (n2)</label><div style="display:flex;gap:10px;"><input type="number" id="pc-n1" value="150"><input type="number" id="pc-n2" value="150"></div></div>
-                        <div class="fg"><label>Unexp Event %</label><input type="number" id="pc-p2" value="10"></div>
-                        <div class="fg"><label>Observed RR</label><input type="number" id="pc-rr" value="2.0"></div>
-                        <button class="btn-calc" onclick="c_powcohort()">Estimate Power</button>
-                    </div>
-                    <div class="panel">
-                        <table><tr><th>Statistical Power</th></tr><tr><td id="out-pc">--</td></tr></table>
-                    </div>
-                </div>
-            </section>
-
-            <section id="m-powrct" class="content-section">
-                <h2>Power: Clinical Trial</h2>
-                <div class="grid-split">
-                    <div class="panel">
-                        <div class="fg"><label>Intervention % Success</label><input type="number" id="pt-p1" value="60"></div>
-                        <div class="fg"><label>Control % Success</label><input type="number" id="pt-p2" value="40"></div>
-                        <div class="fg"><label>N per arm</label><input type="number" id="pt-n" value="100"></div>
-                        <button class="btn-calc" onclick="c_powrct()">Estimate Power</button>
-                    </div>
-                    <div class="panel">
-                        <table><tr><th>Statistical Power</th></tr><tr><td id="out-pt">--</td></tr></table>
-                    </div>
-                </div>
-            </section>
-
-            <section id="m-powxsec" class="content-section">
-                <h2>Power: Cross-Sectional</h2>
-                <div class="grid-split">
-                    <div class="panel">
-                        <div class="fg"><label>Grp 1 Prevalence %</label><input type="number" id="px-p1" value="25"></div>
-                        <div class="fg"><label>Grp 2 Prevalence %</label><input type="number" id="px-p2" value="15"></div>
-                        <div class="fg"><label>N per group</label><input type="number" id="px-n" value="200"></div>
-                        <button class="btn-calc" onclick="c_powxsec()">Estimate Power</button>
-                    </div>
-                    <div class="panel">
-                        <table><tr><th>Statistical Power</th></tr><tr><td id="out-px">--</td></tr></table>
-                    </div>
-                </div>
-            </section>
-
-            <section id="m-powmean" class="content-section">
-                <h2>Power: Mean Difference</h2>
-                <div class="grid-split">
-                    <div class="panel">
-                        <div class="fg"><label>N per arm</label><input type="number" id="pm-n" value="50"></div>
-                        <div class="fg"><label>Observed SD</label><input type="number" id="pm-sd" value="15"></div>
-                        <div class="fg"><label>Mean Difference</label><input type="number" id="pm-d" value="8"></div>
-                        <button class="btn-calc" onclick="c_powmean()">Estimate Power</button>
-                    </div>
-                    <div class="panel">
-                        <table><tr><th>Statistical Power</th></tr><tr><td id="out-pm">--</td></tr></table>
+                        <h3>Sample Size Distribution</h3>
+                        <table class="results">
+                            <tr><th>Requirement</th><th>Size</th></tr>
+                            <tr><td>Group 1 Limit</td><td id="out-sm-n1">--</td></tr>
+                            <tr><td>Group 2 Limit</td><td id="out-sm-n2">--</td></tr>
+                            <tr><td style="font-weight:700;">Total Cohort Need</td><td id="out-sm-total" style="font-weight:700;">--</td></tr>
+                        </table>
                     </div>
                 </div>
             </section>
@@ -434,10 +517,10 @@
         </main>
     </div>
 
-    <footer>&copy; 2026 Statistic Engine | Illustrated & Structured by Dr Suriya kumareswaran (dr.suriya@moh.gov.my)</footer>
+    <footer>&copy; 2026 Statistic Engine | Designed & Engineered by Dr Suriya kumareswaran (dr.suriya@moh.gov.my)</footer>
 
     <script>
-        // Navigation Logic
+        // UI Framework Route Control
         function nav(id, el) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
             document.getElementById(id).classList.add('active-section');
@@ -447,63 +530,159 @@
         }
         function toggleMenu() { document.getElementById('sidebar-menu').classList.toggle('show-mobile'); }
 
-        // Helper function for quick math mapping
-        const val = (id) => parseFloat(document.getElementById(id).value) || 0;
-        const set = (id, v) => document.getElementById(id).innerText = isNaN(v) ? "--" : v;
-
-        // 1. SMR
-        function c_smr() { set('out-smr', (val('smr-o') / val('smr-e')).toFixed(4)); }
-        // 2. Prop CI
-        function c_propci() { const p = val('pci-x')/val('pci-n'), se = Math.sqrt(p*(1-p)/val('pci-n')); set('out-pci-p', p.toFixed(4)); set('out-pci-l', Math.max(0, p - 1.96*se).toFixed(4)); set('out-pci-u', Math.min(1, p + 1.96*se).toFixed(4)); }
-        // 3. 2x2
-        function c_2x2() { const a=val('t2-a'), b=val('t2-b'), c=val('t2-c'), d=val('t2-d'); set('out-2x2-or', ((a*d)/(b*c)).toFixed(4)); set('out-2x2-rr', ((a/(a+b))/(c/(c+d))).toFixed(4)); set('out-2x2-chi', ((a+b+c+d)*Math.pow((a*d-b*c),2) / ((a+b)*(c+d)*(a+c)*(b+d))).toFixed(4)); }
-        // 4. Dose
-        function c_dose() { const a1=val('dr-a1'),a3=val('dr-a3'); set('out-dr', ((a3-a1)/(a1+1)).toFixed(4)); }
-        // 5. R by C
-        function c_rxc() { 
-            const d = [[val('rc11'),val('rc12'),val('rc13')],[val('rc21'),val('rc22'),val('rc23')]];
-            const rt = [d[0][0]+d[0][1]+d[0][2], d[1][0]+d[1][1]+d[1][2]];
-            const ct = [d[0][0]+d[1][0], d[0][1]+d[1][1], d[0][2]+d[1][2]];
-            const gt = rt[0]+rt[1]; let chi = 0;
-            for(let r=0;r<2;r++) for(let c=0;c<3;c++) { let e = (rt[r]*ct[c])/gt; chi += Math.pow(d[r][c]-e,2)/e; }
-            set('out-rxc', chi.toFixed(4)); 
+        // Math Helpers
+        const v = (id) => parseFloat(document.getElementById(id).value) || 0;
+        const set = (id, val) => document.getElementById(id).innerText = isNaN(val) ? "--" : val;
+        
+        // Z-score map for standard limits
+        function getZ(percent) {
+            if(percent >= 99.99) return 3.89; if(percent >= 99.9) return 3.29;
+            if(percent >= 99) return 2.58; if(percent >= 95) return 1.96;
+            if(percent >= 90) return 1.64; if(percent >= 80) return 1.28; return 0;
         }
+
+        // 1. SMR (Byar's Approximation)
+        function c_smr() { 
+            let o = v('smr-o'), e = v('smr-e');
+            set('out-smr-val', (o/e).toFixed(4));
+            let mult = 1.96 / (3 * Math.sqrt(o));
+            let low = o * Math.pow((1 - (1/(9*o)) - mult), 3) / e;
+            let up = (o+1) * Math.pow((1 - (1/(9*(o+1))) + (1.96/(3*Math.sqrt(o+1)))), 3) / e;
+            set('out-smr-l', low.toFixed(4)); set('out-smr-u', up.toFixed(4));
+        }
+
+        // 2. Proportion CI
+        function c_propci() { 
+            let x = v('pci-x'), n = v('pci-n'), p = x/n, z = 1.96, z2 = Math.pow(z,2);
+            let w_se = Math.sqrt(p*(1-p)/n);
+            set('out-pci-pw', p.toFixed(4)); set('out-pci-wl', Math.max(0, p - z*w_se).toFixed(4)); set('out-pci-wu', Math.min(1, p + z*w_se).toFixed(4));
+            let s_den = 2*(n+z2), s_t1 = 2*n*p + z2, s_t2 = z*Math.sqrt(z2 + 4*n*p*(1-p));
+            set('out-pci-ps', p.toFixed(4)); set('out-pci-sl', Math.max(0, (s_t1-s_t2)/s_den).toFixed(4)); set('out-pci-su', Math.min(1, (s_t1+s_t2)/s_den).toFixed(4));
+        }
+
+        // 3. 2x2 Table
+        function c_2x2() { 
+            let a=v('t2-a'), b=v('t2-b'), c=v('t2-c'), d=v('t2-d'), n=a+b+c+d;
+            set('out-2x2-or', ((a*d)/(b*c)).toFixed(4));
+            set('out-2x2-rr', ((a/(a+b))/(c/(c+d))).toFixed(4));
+            set('out-2x2-chi', (n*Math.pow((a*d-b*c),2) / ((a+b)*(c+d)*(a+c)*(b+d))).toFixed(4));
+            set('out-2x2-yates', (n*Math.pow(Math.max(0, Math.abs(a*d-b*c) - n/2), 2) / ((a+b)*(c+d)*(a+c)*(b+d))).toFixed(4));
+        }
+
+        // 4. Dose-Response
+        function c_dose() { 
+            let s=[v('dr-s1'),v('dr-s2'),v('dr-s3')], a=[v('dr-a1'),v('dr-a2'),v('dr-a3')], b=[v('dr-b1'),v('dr-b2'),v('dr-b3')];
+            let n=[], t_a=0, t_n=0, sum_s=0, sum_sa=0, sum_s2n=0;
+            for(let i=0;i<3;i++) { n[i]=a[i]+b[i]; t_a+=a[i]; t_n+=n[i]; sum_s+=s[i]*n[i]; sum_sa+=s[i]*a[i]; sum_s2n+=Math.pow(s[i],2)*n[i]; }
+            let exp = t_a/t_n, v_s = sum_s2n - Math.pow(sum_s,2)/t_n;
+            let chi = Math.pow(sum_sa - exp*sum_s, 2) / (exp * (1-exp) * v_s);
+            set('out-dr-chi', chi.toFixed(4));
+        }
+
+        // 5. R by C Table
+        function c_rxc() { 
+            let d = [[v('rc11'),v('rc12'),v('rc13')],[v('rc21'),v('rc22'),v('rc23')],[v('rc31'),v('rc32'),v('rc33')]];
+            let rt=[0,0,0], ct=[0,0,0], gt=0;
+            for(let r=0;r<3;r++) for(let c=0;c<3;c++) { rt[r]+=d[r][c]; ct[c]+=d[r][c]; gt+=d[r][c]; }
+            let chi = 0, df = 0;
+            for(let r=0;r<3;r++) for(let c=0;c<3;c++) { 
+                let e = (rt[r]*ct[c])/gt; 
+                if(e>0) { chi += Math.pow(d[r][c]-e,2)/e; }
+            }
+            // Count non-empty rows/cols for exact df
+            let r_cnt = rt.filter(x=>x>0).length, c_cnt = ct.filter(x=>x>0).length;
+            set('out-rxc-chi', chi.toFixed(4)); set('out-rxc-df', Math.max(0, (r_cnt-1)*(c_cnt-1)));
+        }
+
         // 6. Matched CC
-        function c_mcc() { const b=val('mc-b'), c=val('mc-c'); set('out-mcc', (Math.pow(b-c,2)/(b+c)).toFixed(4)); }
-        // 7. Screen
-        function c_screen() { const a=val('sc-a'),b=val('sc-b'),c=val('sc-c'),d=val('sc-d'); set('out-sc-sens', ((a/(a+c))*100).toFixed(2)+'%'); set('out-sc-spec', ((d/(b+d))*100).toFixed(2)+'%'); set('out-sc-ppv', ((a/(a+b))*100).toFixed(2)+'%'); set('out-sc-npv', ((d/(c+d))*100).toFixed(2)+'%'); }
-        // 8. 1 Rate
-        function c_1rate() { set('out-1rate', (val('r1-a')/val('r1-pt')).toFixed(6)); }
+        function c_mcc() { let b=v('mc-b'), c=v('mc-c'); set('out-mcc-or', (c/b).toFixed(4)); set('out-mcc-chi', (Math.pow(Math.abs(b-c)-1,2)/(b+c)).toFixed(4)); }
+
+        // 7. Screening
+        function c_screen() { 
+            let a=v('sc-a'), b=v('sc-b'), c=v('sc-c'), d=v('sc-d');
+            set('out-sc-sens', ((a/(a+c))*100).toFixed(2)); set('out-sc-spec', ((d/(b+d))*100).toFixed(2));
+            set('out-sc-ppv', ((a/(a+b))*100).toFixed(2)); set('out-sc-npv', ((d/(c+d))*100).toFixed(2));
+            set('out-sc-acc', (((a+d)/(a+b+c+d))*100).toFixed(2));
+        }
+
+        // 8. 1 Rate (Byar's)
+        function c_1rate() { 
+            let a=v('r1-a'), pt=v('r1-pt'), r=a/pt;
+            set('out-1r-rate', r.toFixed(6));
+            let mult = 1.96 / (3 * Math.sqrt(a));
+            set('out-1r-low', ((a * Math.pow(1 - 1/(9*a) - mult, 3))/pt).toFixed(6));
+            set('out-1r-up', (((a+1) * Math.pow(1 - 1/(9*(a+1)) + (1.96/(3*Math.sqrt(a+1))), 3))/pt).toFixed(6));
+        }
+
         // 9. 2 Rates
-        function c_2rates() { const r1=val('r2-a1')/val('r2-pt1'), r2=val('r2-a2')/val('r2-pt2'); set('out-2rate-rr', (r1/r2).toFixed(4)); set('out-2rate-rd', (r1-r2).toFixed(6)); }
+        function c_2rates() { 
+            let r1 = v('r2-a1')/v('r2-pt1'), r2 = v('r2-a2')/v('r2-pt2');
+            set('out-2r-rr', (r1/r2).toFixed(4)); set('out-2r-rd', (r1-r2).toFixed(6)); 
+        }
+
         // 10. Mean CI
-        function c_meanci() { const m=val('mci-m'), se=val('mci-sd')/Math.sqrt(val('mci-n')); set('out-mci-l', (m-1.96*se).toFixed(4)); set('out-mci-u', (m+1.96*se).toFixed(4)); }
+        function c_meanci() { let m=v('mci-m'), se=v('mci-sd')/Math.sqrt(v('mci-n')); set('out-mci-l', (m-1.96*se).toFixed(4)); set('out-mci-u', (m+1.96*se).toFixed(4)); }
+
         // 11. Median CI
-        function c_median() { const np=val('med-n')*val('med-p'), se=1.96*Math.sqrt(val('med-n')*val('med-p')*(1-val('med-p'))); set('out-med-l', Math.round(np-se)); set('out-med-u', Math.round(np+se)); }
+        function c_median() { 
+            let np = v('med-n')*v('med-p'), se = 1.96*Math.sqrt(v('med-n')*v('med-p')*(1-v('med-p')));
+            set('out-med-l', Math.round(np-se)); set('out-med-u', Math.round(np+se)); 
+        }
+
         // 12. t-test
-        function c_ttest() { set('out-ttest', Math.abs((val('tt-m1')-val('tt-m2'))/Math.sqrt((Math.pow(val('tt-s1'),2)/val('tt-n1'))+(Math.pow(val('tt-s2'),2)/val('tt-n2')))).toFixed(4)); }
+        function c_ttest() { 
+            let n1=v('tt-n1'), m1=v('tt-m1'), s1=v('tt-s1'), n2=v('tt-n2'), m2=v('tt-m2'), s2=v('tt-s2');
+            let pool = ((n1-1)*Math.pow(s1,2) + (n2-1)*Math.pow(s2,2)) / (n1+n2-2);
+            let t = Math.abs(m1-m2) / Math.sqrt(pool/n1 + pool/n2);
+            set('out-tt-diff', Math.abs(m1-m2).toFixed(4)); set('out-tt-val', t.toFixed(4)); set('out-tt-df', n1+n2-2);
+        }
+
         // 13. ANOVA
-        function c_anova() { const gm=(val('an-m1')+val('an-m2')+val('an-m3'))/3; set('out-anova', Math.abs((Math.pow(val('an-m1')-gm,2)+Math.pow(val('an-m3')-gm,2))*3.5).toFixed(4)); }
+        function c_anova() { 
+            let n=[v('an-n1'),v('an-n2'),v('an-n3')], m=[v('an-m1'),v('an-m2'),v('an-m3')], s=[v('an-s1'),v('an-s2'),v('an-s3')];
+            let nT=n[0]+n[1]+n[2], gm=(n[0]*m[0]+n[1]*m[1]+n[2]*m[2])/nT;
+            let ssb = n[0]*Math.pow(m[0]-gm,2) + n[1]*Math.pow(m[1]-gm,2) + n[2]*Math.pow(m[2]-gm,2);
+            let ssw = (n[0]-1)*Math.pow(s[0],2) + (n[1]-1)*Math.pow(s[1],2) + (n[2]-1)*Math.pow(s[2],2);
+            let dfb = 2, dfw = nT-3;
+            let msb = ssb/dfb, msw = ssw/dfw;
+            set('out-an-f', (msb/msw).toFixed(4)); set('out-an-dfb', dfb); set('out-an-dfw', dfw);
+        }
+
         // 14. SS Prop
-        function c_ssprop() { const p=val('sp-p')/100, d=val('sp-d')/100, N=val('sp-n'); set('out-ssprop', Math.ceil((N*p*(1-p)*3.84) / ((Math.pow(d,2)*(N-1)) + (3.84*p*(1-p))))); }
-        // 15. SS UCC
-        function c_ssucc() { const p2=val('su-p2')/100, p1=(p2*val('su-or'))/(1-p2+p2*val('su-or')), pm=(p1+p2)/2, n1=Math.pow(1.96*Math.sqrt(2*pm*(1-pm))+0.84*Math.sqrt(p1*(1-p1)+p2*(1-p2)),2)/Math.pow(p1-p2,2); set('out-su-c1', Math.ceil(n1)); set('out-su-c2', Math.ceil(n1*val('su-r'))); }
+        function c_ssprop() { 
+            let p=v('sp-p')/100, d=v('sp-d')/100, N=v('sp-n'), deff=v('sp-deff');
+            const run = (z) => Math.ceil((deff * N * Math.pow(z,2) * p * (1-p)) / (Math.pow(d,2)*(N-1) + Math.pow(z,2)*p*(1-p)));
+            set('out-sp-99', run(2.58)); set('out-sp-95', run(1.96)); set('out-sp-90', run(1.64)); set('out-sp-80', run(1.28));
+        }
+
+        // Kelsey SS Engine for CC/Cohort/Mean
+        function kelsey_z(conf, pow) { 
+            let za = getZ(conf);
+            let zb = (pow>=90)?1.28 : (pow>=80)?0.84 : 0;
+            return {a: za, b: zb};
+        }
+
+        // 15. SS UCC (Kelsey)
+        function c_ssucc() { 
+            let {a,b} = kelsey_z(v('su-conf'), v('su-pow')), r = v('su-r'), p2 = v('su-p2')/100, or = v('su-or');
+            let p1 = (p2*or) / (1-p2+p2*or), p = (p1 + r*p2)/(r+1);
+            let n1 = Math.pow(a*Math.sqrt((r+1)*p*(1-p)) + b*Math.sqrt(r*p1*(1-p1) + p2*(1-p2)), 2) / (r*Math.pow(p1-p2,2));
+            set('out-su-cases', Math.ceil(n1)); set('out-su-ctrls', Math.ceil(n1*r)); set('out-su-total', Math.ceil(n1 + n1*r));
+        }
+
         // 16. SS Cohort
-        function c_sscohort() { const p1=val('sc-p1')/100, p2=val('sc-p2')/100, pm=(p1+p2)/2; set('out-sc-n', Math.ceil(Math.pow(1.96*Math.sqrt(2*pm*(1-pm))+0.84*Math.sqrt(p1*(1-p1)+p2*(1-p2)),2)/Math.pow(p1-p2,2))); }
-        // 17. SS Mean
-        function c_ssmean() { set('out-sm-n', Math.ceil(2*Math.pow((1.96+0.84)*val('sm-sd'),2)/Math.pow(val('sm-d'),2))); }
-        // Power estimations (Z-approximations for client-side JS limits)
-        function calc_pow_approx(v) { return Math.min(99.9, Math.max(5, v)).toFixed(2) + "%"; }
-        // 18. Pow UCC
-        function c_powucc() { set('out-pu', calc_pow_approx((val('pu-n1')/(val('pu-n1')+200))*100 + (val('pu-or')*2.5))); }
-        // 19. Pow Cohort
-        function c_powcohort() { set('out-pc', calc_pow_approx((val('pc-n1')/(val('pc-n1')+150))*95 + (val('pc-rr')*1.5))); }
-        // 20. Pow RCT
-        function c_powrct() { set('out-pt', calc_pow_approx(Math.abs(val('pt-p1')-val('pt-p2')) * 4 * (val('pt-n')/(val('pt-n')+50)))); }
-        // 21. Pow Xsec
-        function c_powxsec() { set('out-px', calc_pow_approx(Math.abs(val('px-p1')-val('px-p2')) * 4.5 * (val('px-n')/(val('px-n')+80)))); }
-        // 22. Pow Mean
-        function c_powmean() { set('out-pm', calc_pow_approx((val('pm-d')*Math.sqrt(val('pm-n')))/(val('pm-sd')*0.4) * 10)); }
+        function c_sscohort() { 
+            let {a,b} = kelsey_z(v('sc-conf'), v('sc-pow')), r = v('sc-r'), p2 = v('sc-p2')/100, p1 = v('sc-p1')/100, p = (p1 + r*p2)/(r+1);
+            let n1 = Math.pow(a*Math.sqrt((r+1)*p*(1-p)) + b*Math.sqrt(r*p1*(1-p1) + p2*(1-p2)), 2) / (r*Math.pow(p1-p2,2));
+            set('out-sc-n1', Math.ceil(n1)); set('out-sc-n2', Math.ceil(n1*r)); set('out-sc-total', Math.ceil(n1 + n1*r));
+        }
+
+        // 17. SS Mean Diff
+        function c_ssmean() { 
+            let {a,b} = kelsey_z(v('sm-conf'), v('sm-pow')), r = v('sm-r'), sd = v('sm-sd'), d = v('sm-d');
+            let n1 = Math.pow(a+b, 2) * Math.pow(sd, 2) * (r+1) / (r * Math.pow(d, 2));
+            set('out-sm-n1', Math.ceil(n1)); set('out-sm-n2', Math.ceil(n1*r)); set('out-sm-total', Math.ceil(n1 + n1*r));
+        }
     </script>
 </body>
 </html>
